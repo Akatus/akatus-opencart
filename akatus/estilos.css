@@ -1,0 +1,70 @@
+#cartoes_akatus, #lista_de_parcelas {
+	display:block;
+	position:relative;
+	list-style:none;
+	list-style-image:none;
+	list-style-type:none;
+}
+#cartoes_akatus li {
+	display:block;
+	position:relative;
+	float:left;
+	width:150px;
+	height:60px;
+	text-align:center;
+	cursor:pointer;
+}
+#lista_de_parcelas li {
+	display:block;
+	position:relative;
+	float:left;
+	width:360px;
+	height:30px;
+	text-align:left;
+	cursor:pointer;
+	font-size:14px;
+}
+.borda_rodape {
+	border-bottom:1px dotted #333;
+}
+form#pagamento {
+	margin-bottom:100px;
+	display:block;
+}
+#bandeiras_akatus {
+	width:100%;
+	height:130px;
+	display:block;
+	position:relative;
+	float:left;
+	border: none;
+	background-color:#fff;
+}
+#dados_titular_cartao{
+	
+}
+#parcelas_akatus{
+	width:100%; height:120px; display:block; position:relative; float:left; border-bottom: 1px solid #ccc; background-color:#fff; margin-top:20px; margin-bottom:10px;
+}
+#carregando
+{
+	display:none;
+}
+
+#popup{
+	
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+
+.popup {
+    width:500px;
+    height:500px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-200px 0 0 -250px; /* [-(height/2)px 0 0 -(width/2)px] */
+    display:none;
+	background-color:white;
+	border:5px solid #666;
+  }
