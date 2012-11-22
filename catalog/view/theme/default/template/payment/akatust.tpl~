@@ -49,7 +49,7 @@ function vai(tef)
 <div id="carregando" style="width:100%; text-align:right; display:none">
      <BR /><BR />
      <center>
-	<img src="image/carregando.gif" width="220" height="19" />
+	<img src="/image/carregando.gif" width="220" height="19" />
        </center>
  </div>
 

@@ -81,7 +81,7 @@ class ControllerInformationAkatus extends Controller
 		else if($tipo==5)
 		{
 		   $this->data['heading_title'] = "Obrigado por seu pedido!"; 
-		   $this->data['conteudo_centro'] = 'Seu pedido foi enviado com sucesso. Contudo, é necessário que seja efetuado o pagamento do boleto bancário para que ele possa ser processado. Para imprimir seu boleto, clique no botão abaixo:<BR><BR><a href="'.urldecode($_REQUEST['url_boleto']).'" target="_blank"><img src="image/botao_imprimir_boleto.png" /></a><BR>';
+		   $this->data['conteudo_centro'] = 'Seu pedido foi enviado com sucesso. Contudo, é necessário que seja efetuado o pagamento do boleto bancário para que ele possa ser processado. Para imprimir seu boleto, clique no botão abaixo:<BR><BR><a href="'.urldecode($_REQUEST['url_boleto']).'" target="_blank"><img src="/image/botao_imprimir_boleto.png" /></a><BR>';
 			
 		}
 		else if($tipo==6)
