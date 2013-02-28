@@ -20,70 +20,124 @@
  * @author Andresa Martins da Silva
  * @copyright Andresa Web Studio
  * @site http://www.andresa.com.br
- * @version 1.0 Beta
  **/
 
-#Fecha a janela se tentarem acessar diretamente este arquivo
-if(empty($_POST))
+class Transacao
+{
+    const AGUARDANDO_PAGAMENTO  = 'Aguardando Pagamento';
+    const EM_ANALISE            = 'Em Análise';
+    const APROVADO              = 'Aprovado';
+    const CANCELADO             = 'Cancelado';
+    const DEVOLVIDO             = 'Devolvido';
+    const COMPLETO              = 'Completo';
+    
+    const ID_PROCESSING             = 2;
+    
+    const ID_AGUARDANDO_PAGAMENTO   = 10200;
+    const ID_EM_ANALISE             = 10201;
+    const ID_APROVADO               = 10202;
+    const ID_CANCELADO              = 10203;
+    const ID_COMPLETO               = 10204;
+    const ID_DEVOLVIDO              = 10205;
+}
+
+if(! empty($_POST))
 {	
-	echo '<script type="text/javascript">window.close()</script>';
-	exit;
+    require_once('../config.php');   
+    require_once(DIR_SYSTEM . 'startup.php');
+
+    global $db;
+
+    $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+    $settings = $db->query("SELECT value FROM " . DB_PREFIX . "setting s where s.key='akatus_token_nip'");
+    $tokenNip = $settings->row['value'];
+    
+    if($tokenNip != $_POST['token']) die;
+
+    $orders = $db->query('SELECT * FROM `' . DB_PREFIX . 'order` WHERE order_id = ' . $_POST["referencia"]);
+    $order = $orders->row;
+
+    $novoStatus = getNovoStatus($_POST['status'], $order['order_status_id']);
+
+    if ($novoStatus) {
+        $db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = ' . $novoStatus . ' WHERE `order_id` = ' . $order['order_id']);
+        $db->query("INSERT INTO `" . DB_PREFIX . "order_history` VALUES (NULL , '" . $order['order_id'] . "', '" . $novoStatus . "', '0', '', NOW());");	    
+    }
 }
 
-#Arquivo com as configurações da loja
-require_once('../config.php');   
 
-#rotinas Inicialização
-require_once(DIR_SYSTEM . 'startup.php');
-
-global $db;
-
-#Cria nova conexão com o banco de dados e seleciona o TOKEN da Akatus
-$db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-$query = $db->query("SELECT value FROM " . DB_PREFIX . "setting s where s.key='akatus_token_nip'");
-
-foreach ($query->rows as $setting) 
+function getNovoStatus($statusRecebido, $statusAtual)
 {
-	define('TOKEN', $setting['value']);
+    switch ($statusRecebido) {
+
+        case Transacao::AGUARDANDO_PAGAMENTO:
+            if ($statusAtual == Transacao::ID_PROCESSING) {
+                return Transacao::ID_AGUARDANDO_PAGAMENTO;
+            } else {
+                return false;
+            }
+
+        case Transacao::EM_ANALISE:
+            $listaStatus = array(
+                Transacao::ID_PROCESSING,
+                Transacao::ID_AGUARDANDO_PAGAMENTO
+            );            
+            
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_EM_ANALISE;
+            } else {
+                return false;
+            }
+
+        case Transacao::APROVADO:
+            $listaStatus = array(
+                Transacao::ID_PROCESSING,                
+                Transacao::ID_AGUARDANDO_PAGAMENTO,
+                Transacao::ID_EM_ANALISE
+            );
+            
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_APROVADO;
+            }
+
+        case Transacao::CANCELADO:
+            $listaStatus = array(
+                Transacao::ID_PROCESSING,
+                Transacao::ID_AGUARDANDO_PAGAMENTO,
+                Transacao::ID_EM_ANALISE
+            );
+            
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_CANCELADO;
+            }
+
+        case Transacao::COMPLETO:
+            $listaStatus = array(
+                Transacao::ID_PROCESSING,
+                Transacao::ID_AGUARDANDO_PAGAMENTO,
+                Transacao::ID_EM_ANALISE,
+                Transacao::ID_APROVADO,
+            );                
+
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_COMPLETO;
+            } else {
+                return false;
+            }            
+
+        case Transacao::DEVOLVIDO:
+            $listaStatus = array(
+                Transacao::ID_APROVADO,
+                Transacao::ID_COMPLETO
+            );
+            
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_DEVOLVIDO;                    
+            } else {
+                return false;
+            }            
+            
+        default:
+            return false;
+    }
 }
-
-#O Token enviado via POST deve ser igual ao da configuração da loja, senão 
-#a execução do programa será encerrada
-
-if(TOKEN !=$_POST['token']) die;
-
-	
-#Seleciona os dados da compra
-$order = $db->query('SELECT * FROM `' . DB_PREFIX . 'order` WHERE order_id = ' . $_POST["referencia"]);
-
-
-switch($_POST['status'])
-{
-	case 'Aguardando Pagamento' :
-		$order_status_id = 10200;
-	break;
-		
-	case 'Em Analise' :
-	case 'Em AnÃ¡lise':
-		$order_status_id = 10201;
-	break;
-		
-	case 'Aprovado' :
-		$order_status_id = 10202;
-	break;
-		
-	case 'Cancelado' :
-		$order_status_id = 10203;
-	break;
-	
-	default:
-		$order_status_id = 10206;
-	break;
-}
-
-#Atualiza o status da compra
-
-$db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = ' . $order_status_id . ' WHERE `order_id` = ' . $_POST['referencia']);
-$db->query("INSERT INTO `" . DB_PREFIX . "order_history` VALUES (NULL , '" . $_POST['referencia'] . "', '" . $order_status_id . "', '0', '', NOW());");	
-
-?>
