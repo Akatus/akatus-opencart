@@ -56,14 +56,6 @@
         <td><input type="text" name="akatust_sort_order" value="<?php echo $akatust_sort_order; ?>" size="1" /></td>
       </tr>
 	  
-	 <!-- <tr>
-        <td width="18%"><span class="required">*</span> Desconto em %:</td>
-        <td width="82%">
-		<input type="text" name="akatust_desconto" value="<?php echo $akatust_desconto; ?>" size='2' />
-          <br />
-
-      </tr> -->
-	  
 	  <tr>
 	    <td>Status:</td>
 	    <td><select name="akatust_status">
@@ -94,22 +86,6 @@
 	    <td><input name="akatus_api_key" type="text" id="akatus_api_key" value="<?php echo $akatus_api_key; ?>" size="70" />
 	      <br /></td>
 	    </tr>
-	  
-	    <!--<tr>
-        <td width="18%"><span class="required">*</span> DV Conta Cedente (digito):</td>
-        <td width="82%"><input type="text" name="akatust_ccdv" value="<?php echo $akatust_ccdv; ?>" />
-          <br />
-		  </tr>-->
-	  
-	  
-	  
-	  
-
-
-	  
-	  
-
-	  
     </table>
     </form>
   </div>
@@ -117,5 +93,4 @@
 <center>
   <a href="http://www.andresa.com.br" target="_blank">Andresa Web Studio</a>
 </center>
-</body>
 </body>
