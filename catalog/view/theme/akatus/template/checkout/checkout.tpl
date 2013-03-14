@@ -1,0 +1,64 @@
+<?php echo $header; ?>
+<?php echo $column_left; ?>
+<?php echo $column_right; ?>
+
+<div id="content">
+    <?php echo $content_top; ?>
+    
+    <div class="breadcrumb">
+        <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+        <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
+        <?php } ?>
+    </div>
+    
+    <h1><?php echo $heading_title; ?></h1>
+    
+    <div class="checkout">
+        <form id="one-step-checkout" action="index.php?route=checkout/checkout/validate" method="post">
+
+            <div id="left-column">
+                <div id="payment-address">
+                <?php if (!$logged) { ?>      
+                    <div><?php include 'register.tpl' ?></div>
+                <?php } else { ?>
+                    <div><?php include 'payment_address.tpl' ?></div>
+                <?php } ?>  
+                </div>
+                
+                <div id="shipping-address">
+                    <div><?php include 'shipping_address.tpl' ?></div>
+                </div>                
+            </div>
+            
+            <div id="center-column">
+                <div id="shipping-method">
+                    <?php include 'shipping_method.tpl' ?>
+                </div>
+
+                <div id="payment-method">
+                    <div><?php include 'payment_method.tpl' ?></div>
+                </div>
+            </div>
+
+            <div id="right-column">
+                <div id="confirm">
+                    <div id="total"><?php include 'confirm.tpl' ?></div>
+
+                    <div class="buttons">
+                        <div class="right">
+                            <input type="submit" value="Finalizar Compra" class="button" />
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </form>
+    </div>
+</div>
+
+<input type="hidden" id="logged" name="logged" value="<?php if ($logged) echo 'true'; ?>" />
+<input type="hidden" id="shipping_required" name="shipping_required" value="<?php if ($shipping_required) echo 'true'; ?>" />
+
+<script type="text/javascript" src="catalog/view/javascript/akatus.js"></script>
+
+<?php echo $content_bottom; ?>
+<?php echo $footer; ?>

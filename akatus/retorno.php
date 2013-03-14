@@ -45,10 +45,17 @@ if(! empty($_POST))
 {	
     require_once('../config.php');   
     require_once(DIR_SYSTEM . 'startup.php');
+    require_once('../catalog/model/checkout/order.php');
 
-    global $db;
-
+    $registry = new Registry();
+    $loader = new Loader($registry);
     $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+    $registry->set('load', $loader);    
+    $registry->set('db', $db);
+    $registry->set('model_checkout_order', new ModelCheckoutOrder($registry));
+    
+    $orderModel = $registry->get('model_checkout_order');
+    
     $settings = $db->query("SELECT value FROM " . DB_PREFIX . "setting s where s.key='akatus_token_nip'");
     $tokenNip = $settings->row['value'];
     
@@ -60,8 +67,11 @@ if(! empty($_POST))
     $novoStatus = getNovoStatus($_POST['status'], $order['order_status_id']);
 
     if ($novoStatus) {
-        $db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = ' . $novoStatus . ' WHERE `order_id` = ' . $order['order_id']);
-        $db->query("INSERT INTO `" . DB_PREFIX . "order_history` VALUES (NULL , '" . $order['order_id'] . "', '" . $novoStatus . "', '0', '', NOW());");	    
+        if ($novoStatus == Transacao::ID_COMPLETO) {
+            $orderModel->confirm($order['order_id'], $novoStatus, $notify = true);
+        } else {
+            $orderModel->update($order['order_id'], $novoStatus);
+        }
     }
 }
 
