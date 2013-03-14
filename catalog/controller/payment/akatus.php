@@ -39,14 +39,14 @@ class ControllerPaymentAkatus extends Controller
 	$this->data['desconto'] = $this->config->get('akatus_desconto');
 	$this->data['valorpedido'] = $order_info['total'];
 	
-    $this->data['back'] = HTTPS_SERVER . 'index.php?route=checkout/payment';
-    $this->data['continue'] = HTTPS_SERVER . 'index.php?route=checkout/success';
+    $this->data['back'] = HTTPS_SERVER . 'akatus.php?route=checkout/payment';
+    $this->data['continue'] = HTTPS_SERVER . 'akatus.php?route=checkout/success';
 	
     if ($this->request->get['route'] != 'checkout/guest_step_3') 
 	{
- 	 $this->data['back'] = HTTPS_SERVER . 'index.php?route=checkout/payment';
+ 	 $this->data['back'] = HTTPS_SERVER . 'akatus.php?route=checkout/payment';
     } else {
-      $this->data['back'] = HTTPS_SERVER . 'index.php?route=checkout/guest_step_2';
+      $this->data['back'] = HTTPS_SERVER . 'akatus.php?route=checkout/guest_step_2';
     }	
     $this->id = 'payment';
     if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/akatus.tpl')) {
@@ -77,8 +77,9 @@ class ControllerPaymentAkatus extends Controller
 		$db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 		$registry->set('db', $db);
 		$pedido = $db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '".$this->session->data['order_id']."'");
-		
-		
+		$estado = $db->query("SELECT code FROM `" . DB_PREFIX . "zone` WHERE zone_id = ".$pedido->row['payment_zone_id']);
+		$pais = $db->query("SELECT iso_code_3 FROM `" . DB_PREFIX . "country` WHERE country_id = ".$pedido->row['payment_country_id']);
+
 		#Fazer a requisição do pagamento enviando o XML
 		
 		  $xml=utf8_encode('<?xml version="1.0" encoding="utf-8"?><carrinho>
@@ -88,7 +89,17 @@ class ControllerPaymentAkatus extends Controller
 			</recebedor>
 			<pagador>
 				<nome>'.$pedido->row['firstname'].' '.$pedido->row['lastname'].'</nome>
-				<email>'.$pedido->row['email'].'</email>				
+				<email>'.$pedido->row['email'].'</email>
+				<enderecos>
+		            <endereco>
+		                <tipo>entrega</tipo>
+		                <logradouro>'.$pedido->row['payment_address_1'].'</logradouro>
+		                <cidade>'.utf8_decode($pedido->row['payment_city']).'</cidade>
+		                <estado>'.$estado->row['code'].'</estado>
+		                <pais>'.$pais->row['iso_code_3'].'</pais>
+		                <cep>'.$pedido->row['payment_postcode'].'</cep>
+		            </endereco>
+		        </enderecos>				
 				<telefones>
 					<telefone>
 						<tipo>residencial</tipo>
@@ -132,7 +143,6 @@ class ControllerPaymentAkatus extends Controller
 		
 		</carrinho>');
 		
-		
 		$URL = "https://www.akatus.com/api/v1/carrinho.xml";
 
 		$ch = curl_init($URL);
@@ -159,14 +169,14 @@ class ControllerPaymentAkatus extends Controller
 		
 		if($akatus['resposta']['status'] =='erro')
 		{
-			 $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=4&msg=".urlencode($akatus['resposta']['descricao'])."';</script>"; 
+			 $ouput = "<script>window.location.href = 'akatus.php?route=information/akatus&tipo=4&msg=".urlencode($akatus['resposta']['descricao'])."';</script>"; 
 			
 			
 		}
 		else if($akatus['resposta']['status'] == 'Em Análise' or $akatus['resposta']['status'] == 'Em AnÃ¡lise')
 		{
 			
-			$ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=1';</script>"; 
+			$ouput = "<script>window.location.href = 'index.php?route=information/akatus&tipo=1';</script>"; 
 			$db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = 10201 WHERE `order_id` = ' . $this->session->data['order_id']);
 
 			
@@ -174,14 +184,14 @@ class ControllerPaymentAkatus extends Controller
 		else if($akatus['resposta']['status'] == 'Cancelado')
 		{
 			
-			$ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=2';</script>"; 
+			$ouput = "<script>window.location.href = 'index.php?route=information/akatus&tipo=2';</script>"; 
 			$db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = 10203 WHERE `order_id` = ' . $this->session->data['order_id']);
 			
 		}
 		
         else if ($akatus['resposta']['status']=='Aprovado')
 		{
-			$ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=3';</script>"; 
+			$ouput = "<script>window.location.href = 'index.php?route=information/akatus&tipo=3';</script>"; 
 			$db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = 10202 WHERE `order_id` = ' . $this->session->data['order_id']);
 			
 		}

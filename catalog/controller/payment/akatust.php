@@ -77,7 +77,9 @@ class ControllerPaymentakatust extends Controller
 		$registry->set('db', $db);
 
 		$pedido = $db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '".$this->session->data['order_id']."' LIMIT 1");
-		
+		$estado = $db->query("SELECT code FROM `" . DB_PREFIX . "zone` WHERE zone_id = ".$pedido->row['payment_zone_id']);
+		$pais = $db->query("SELECT iso_code_3 FROM `" . DB_PREFIX . "country` WHERE country_id = ".$pedido->row['payment_country_id']);
+
 
 		$valor_total_compra=number_format($pedido->row['total'], 2, '.', '') ;
 		
@@ -97,6 +99,16 @@ class ControllerPaymentakatust extends Controller
 			<pagador>
 				<nome>'.$pedido->row['firstname'].' '.$pedido->row['lastname'].'</nome>
 				<email>'.$pedido->row['email'].'</email>
+				<enderecos>
+		            <endereco>
+		                <tipo>entrega</tipo>
+		                <logradouro>'.$pedido->row['payment_address_1'].'</logradouro>
+		                <cidade>'.utf8_decode($pedido->row['payment_city']).'</cidade>
+		                <estado>'.$estado->row['code'].'</estado>
+		                <pais>'.$pais->row['iso_code_3'].'</pais>
+		                <cep>'.$pedido->row['payment_postcode'].'</cep>
+		            </endereco>
+		        </enderecos>
 				
 				<telefones>
 					<telefone>
