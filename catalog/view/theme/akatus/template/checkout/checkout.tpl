@@ -14,6 +14,14 @@
     <h1><?php echo $heading_title; ?></h1>
     
     <div class="checkout">
+        
+        <?php if (isset($error_warning)) { ?>
+            <div class="warning">
+                <?php echo $error_warning; ?>
+                <img src="catalog/view/theme/default/image/close.png" alt="" class="close" />
+            </div>
+        <?php } ?>
+        
         <form id="one-step-checkout" action="index.php?route=checkout/checkout/validate" method="post">
 
             <div id="left-column">

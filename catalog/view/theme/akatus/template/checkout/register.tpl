@@ -63,7 +63,6 @@
     
     <span class="required">*</span> País:<br />
     <select name="country_id" class="akatus-field">
-        <option value=""></option>
         <?php foreach ($countries as $country) { ?>
         <?php if ($country['country_id'] == $country_id) { ?>
         <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
@@ -76,10 +75,10 @@
     <br />
     
     <span class="required">*</span> Estado:<br />
-    <select name="zone_id" class="akatus-field">
-    </select>
+    <select name="zone_id" class="akatus-field"></select>
     <?php if (isset($error['zone'])) echo "<span class='error'>" . $error['zone'] . "</span>" ?>
-    <br /><br />
+    <br />
+    <br />
 </div>
 <div>
     <?php if ($shipping_required) { ?>

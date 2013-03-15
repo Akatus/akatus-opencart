@@ -12,7 +12,7 @@ var MSG_CONFIRMACAO_SENHA_INVALIDA = 'Por favor, preencha corretamente o campo C
 var MSG_ENDERECO_INVALIDO = 'Por favor, preencha o campo Endereço.';
 var MSG_BAIRRO_INVALIDO = 'Por favor, preencha o campo Bairro.';
 var MSG_CIDADE_INVALIDA = 'Por favor, preencha o campo Cidade.';
-var MSG_CEP_INVALIDO = 'Por favor, preencha o campo CEP (somente os 8 números).';
+var MSG_CEP_INVALIDO = 'Por favor, preencha o campo CEP (somente os 8 dígitos).';
 var MSG_PAIS_INVALIDO = 'Por favor, escolha um país.';
 var MSG_ESTADO_INVALIDO = 'Por favor, escolha um estado.';
 var MSG_METODO_ENTREGA_INVALIDO = 'Por favor, selecione o Método de Entrega.';
@@ -198,36 +198,18 @@ $(function() {
 });
 
 function validaFormulario(evento) {
-    var retorno = dadosCadastraisValidos();
-    console.log('cadastrais: ' + retorno);
+    if (dadosCadastraisValidos() &&
+        enderecoCobrancaValido() &&
+        enderecoEntregaValido() &&
+        metodoEntregaValido() &&
+        meioPagamentoValido()) {
 
-    var retorno = enderecoCobrancaValido();
-    console.log('cobranca: ' + retorno);
+        return true;
 
-    var retorno = enderecoEntregaValido();
-    console.log('entrega: ' + retorno);
-
-    var retorno = metodoEntregaValido();
-    console.log('frete: ' + retorno);
-
-    var retorno = meioPagamentoValido();
-    console.log('pagamento: ' + retorno);
-
-    evento.preventDefault();
-    return false;
-
-//    if (dadosCadastraisValidos() &&
-//        enderecoCobrancaValido() &&
-//        enderecoEntregaValido() &&
-//        metodoEntregaValido() &&
-//        meioPagamentoValido()) {
-//
-//        return true;
-//
-//    } else {
-//        evento.preventDefault();
-//        return false;
-//    }
+    } else {
+        evento.preventDefault();
+        return false;
+    }
 }
 
 function dadosCadastraisValidos() {

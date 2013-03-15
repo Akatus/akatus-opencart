@@ -1,9 +1,5 @@
 <h2>Métodos de Entrega</h2>
 
-<?php if (isset($error_warning)) { ?>
-<div class="warning"><?php echo $error_warning; ?></div>
-<?php } ?>
-
 <table class="radio">
 
     <?php if ($shipping_methods) { ?>

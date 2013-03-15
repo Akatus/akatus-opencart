@@ -23,21 +23,27 @@
 <div id="shipping-new" style="display: <?php echo ($addresses ? 'none' : 'block'); ?>;">
     <span class="required">*</span> Nome:
     <input type="text" name="shipping_firstname" value="" class="akatus-field" />
+    <?php if (isset($error['shipping_firstname'])) echo "<span class='error'>" . $error['shipping_firstname'] . "</span>" ?>
 
     <span class="required">*</span> Sobrenome:
     <input type="text" name="shipping_lastname" value="" class="akatus-field" />
+    <?php if (isset($error['shipping_lastname'])) echo "<span class='error'>" . $error['shipping_lastname'] . "</span>" ?>
 
     <span class="required">*</span> Endereço:
     <input type="text" name="shipping_address_1" value="" class="akatus-field" />
+    <?php if (isset($error['shipping_address_1'])) echo "<span class='error'>" . $error['shipping_address_1'] . "</span>" ?>
 
     <span class="required">*</span> Bairro:<br />
-    <input type="text" name="shipping_address_2" value="" class="akatus-field" />    
+    <input type="text" name="shipping_address_2" value="" class="akatus-field" />
+    <?php if (isset($error['shipping_address_2'])) echo "<span class='error'>" . $error['shipping_address_2'] . "</span>" ?>
     
     <span class="required">*</span> Cidade:
     <input type="text" name="shipping_city" value="" class="akatus-field" />
+    <?php if (isset($error['shipping_city'])) echo "<span class='error'>" . $error['shipping_city'] . "</span>" ?>
 
     <span id="shipping-postcode-required" class="required">*</span> CEP:
     <input type="text" name="shipping_postcode" value="" class="akatus-field" />
+    <?php if (isset($error['shipping_postcode'])) echo "<span class='error'>" . $error['shipping_postcode'] . "</span>" ?>
 
     <span class="required">*</span> País:
     <select name="shipping_country_id" class="akatus-field">
@@ -50,9 +56,11 @@
         <?php } ?>
         <?php } ?>
     </select>
-
+    <?php if (isset($error['shipping_country'])) echo "<span class='error'>" . $error['shipping_country'] . "</span>" ?>
+    
     <span class="required">*</span> Estado:
     <select name="shipping_zone_id" class="akatus-field">--- Selecione ---</select>
+    <?php if (isset($error['shipping_zone'])) echo "<span class='error'>" . $error['shipping_zone'] . "</span>" ?>
     <br />
     <br />
 </div>
