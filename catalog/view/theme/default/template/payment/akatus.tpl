@@ -103,7 +103,7 @@ $parcelamento='<UL id="lista_de_parcelas">';
 		
 		
 		
-		<form action="index.php" method="post" enctype="application/x-www-form-urlencoded" name="pagamento" id="pagamento" >
+		<form action="akatus.php" method="post" enctype="application/x-www-form-urlencoded" name="pagamento" id="pagamento" >
 		
 		<input name="route" type="hidden" value="payment/akatus/confirm" />
 		
