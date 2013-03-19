@@ -35,6 +35,11 @@
     <input type="password" name="confirm" value="<?php if (isset($confirm)) echo $confirm ?>" class="akatus-field" />
     <?php if (isset($error['confirm'])) echo "<span class='error'>" . $error['confirm'] . "</span>" ?>
     
+    <input type="hidden" name="fax" value="">
+    <input type="hidden" name="company" value="">
+    <input type="hidden" name="company_id" value="">
+    <input type="hidden" name="tax_id" value="">
+    
     <br />
     <br />
 </div>

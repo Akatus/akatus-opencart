@@ -10,8 +10,11 @@ class ControllerPaymentAkatust extends AkatusPaymentBaseController {
 
         $db = $this->getDatabaseConnection();
         
-        $order = $order = $db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . $orderId ."' LIMIT 1");
-        $xml = $this->getXML($order);
+        $order = $db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . $orderId ."' LIMIT 1");
+		$state = $db->query("SELECT code FROM `" . DB_PREFIX . "zone` WHERE zone_id = ".$order->row['payment_zone_id']);
+		$country = $db->query("SELECT iso_code_3 FROM `" . DB_PREFIX . "country` WHERE country_id = ".$order->row['payment_country_id']);
+        
+        $xml = $this->getXML($order, $state, $country);
         $url = $this->getUrl();
 
         $ch = curl_init($url);

@@ -59,7 +59,8 @@ class AkatusPaymentBaseController extends Controller {
 
         $payment_address = $this->session->data['payment_address'];
 
-        $data['comment']                    = '';
+        $data['fax']                        = '';
+        $data['comment']                    = '';        
         $data['payment_company']            = '';
         $data['payment_company_id']         = '';
         $data['payment_tax_id']             = '';
@@ -88,19 +89,21 @@ class AkatusPaymentBaseController extends Controller {
         if ($this->cart->hasShipping()) {
             $shipping_address = $this->session->data['shipping_address'];
 
-            $data['shipping_firstname'] = $shipping_address['firstname'];
-            $data['shipping_lastname'] = $shipping_address['lastname'];
-            $data['shipping_company'] = $shipping_address['company'];
-            $data['shipping_address_1'] = $shipping_address['address_1'];
-            $data['shipping_address_2'] = $shipping_address['address_2'];
-            $data['shipping_city'] = $shipping_address['city'];
-            $data['shipping_postcode'] = $shipping_address['postcode'];
-            $data['shipping_zone_id'] = $shipping_address['zone_id'];
-            $data['shipping_country_id'] = $shipping_address['country_id'];
+            $data['shipping_firstname']         = $shipping_address['firstname'];
+            $data['shipping_lastname']          = $shipping_address['lastname'];
+            $data['shipping_address_1']         = $shipping_address['address_1'];
+            $data['shipping_address_2']         = $shipping_address['address_2'];
+            $data['shipping_city']              = $shipping_address['city'];
+            $data['shipping_postcode']          = $shipping_address['postcode'];
+            $data['shipping_country_id']        = $shipping_address['country_id'];            
+            $data['shipping_zone_id']           = $shipping_address['zone_id'];
 
-            $data['shipping_zone'] = isset($shipping_address['zone']) ? $shipping_address['zone'] : '';
-            $data['shipping_address_format'] = isset($shipping_address['address_format']) ? $shipping_address['address_format'] : '';
-            $data['shipping_country'] = isset($shipping_address['country']) ? $shipping_address['country'] : '';
+            $data['shipping_zone']              = isset($shipping_address['zone']) ? $shipping_address['zone'] : '';
+            $data['shipping_address_format']    = isset($shipping_address['address_format']) ? $shipping_address['address_format'] : '';
+            $data['shipping_country']           = isset($shipping_address['country']) ? $shipping_address['country'] : '';
+            $data['shipping_company']        = isset($shipping_address['shipping_company']) ? $shipping_address['shipping_company'] : '';
+            $data['shipping_company_id']        = isset($shipping_address['shipping_company_id']) ? $shipping_address['shipping_company_id'] : '';
+            $data['shipping_tax_id']        = isset($shipping_address['shipping_tax_id']) ? $shipping_address['shipping_tax_id'] : '';
 
             $shippingCodeParts = explode('.', $this->request->post['shipping_method']);
             $shippingCode = $shippingCodeParts[0];
@@ -121,6 +124,7 @@ class AkatusPaymentBaseController extends Controller {
             $data['shipping_zone_id'] = '';
             $data['shipping_country'] = '';
             $data['shipping_country_id'] = '';
+            $data['shipping_tax_id'] = '';
             $data['shipping_address_format'] = '';
             $data['shipping_method'] = '';
             $data['shipping_code'] = '';
@@ -260,7 +264,7 @@ class AkatusPaymentBaseController extends Controller {
                 break;
 
             case 'akatust':
-                $meioDePagamento = $_GET['tef'];
+                $meioDePagamento = $_POST['tef'];
                 break;
 
             case 'akatus':

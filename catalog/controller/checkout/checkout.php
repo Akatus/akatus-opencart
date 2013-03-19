@@ -307,14 +307,7 @@ class ControllerCheckoutCheckout extends Controller {
     private function createRedirectUrl()
     {
         $paymentMethod = $this->request->post['payment_method'];
-        
-        $url = 'payment/' . $paymentMethod;
-        
-        if ($paymentMethod === 'akatust') {
-            $url .= '&tef=' . $this->request->post['tef'];
-        }
-        
-        return $url;
+        return 'payment/' . $paymentMethod;
     }    
     
     public function findShippingMethods($ajax = true) {
