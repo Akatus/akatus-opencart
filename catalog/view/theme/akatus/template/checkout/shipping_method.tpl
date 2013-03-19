@@ -6,7 +6,7 @@
         <?php foreach ($shipping_methods as $shipping_method) { ?>
             <?php if (!$shipping_method['error']) { ?>
                 <?php foreach ($shipping_method['quote'] as $quote) { ?>
-                    <tr class="highlight">
+                    <tr>
                         <td><?php if ($quote['code'] == $code) { ?>
                             <input type="radio" name="shipping_method" value="<?php echo $quote['code']; ?>" id="<?php echo $quote['code']; ?>" checked="checked" />
                             <?php } else { ?>

@@ -1,6 +1,8 @@
 <?php  
 class ControllerCheckoutCheckout extends Controller { 
 
+    private static $JUROS = 1.99;
+    
     public function index() {
         $this->language->load('checkout/checkout');
 
@@ -70,21 +72,42 @@ class ControllerCheckoutCheckout extends Controller {
             $this->language->load('checkout/checkout');
             
             $this->validateStock();
-            $this->saveAddress();
             
-            if (! $this->customer->isLogged()) {
+            $errors = false;
+            $logged = $this->customer->isLogged();
+            $newShippingAddress = isset($this->request->post['shipping_address']) && $this->request->post['shipping_address'] === 'new';        
+            $newPaymentAddress = isset($this->request->post['payment_address']) && $this->request->post['payment_address'] === 'new';            
+            
+            $paymentAddress = $this->getPaymentAddress($logged, $newPaymentAddress);
+            $shippingAddress = $this->getShippingAddress($logged, $newShippingAddress);
+            
+            if ($logged) {
+                if ($newPaymentAddress) {
+                    $errors = $this->validatePaymentAddress();
+                }
+                if ($newShippingAddress) {
+                    $errors = $this->validateShippingAddress();
+                }
+
+            } else {
+                $errors = $this->validateUserRegistration();
                 
-                $this->validateUserRegistration();
-                
-                if ($this->data['error']) {
-                    $this->data = array_merge($this->data, $this->request->post);
-                    return $this->index();
-                    
-                } else {
-                    $this->saveCustomerPlusAddress();
-                    $this->loginJustRegisteredUser();                    
+                if ($newShippingAddress) {
+                    $errors = $this->validateShippingAddress();
                 }
             }
+            
+            $this->data = array_merge($this->data, $this->request->post);
+            
+            if ($errors) {
+                return $this->index();
+                
+            } else {
+                $this->saveData($logged, $newPaymentAddress, $newShippingAddress, $paymentAddress, $shippingAddress);
+            }
+            
+            $this->session->data['payment_address'] = $paymentAddress;
+            $this->session->data['shipping_address'] = $shippingAddress;
             
             return $this->forward($this->createRedirectUrl());
         }       
@@ -117,61 +140,48 @@ class ControllerCheckoutCheckout extends Controller {
 		}
     }    
     
-    private function saveAddress()
+    private function getPaymentAddress($logged, $newPaymentAddress)
     {
-        $paymentAddress = array();
-        $paymentAddress['firstname'] = isset($this->request->post['firstname']) ? $this->request->post['firstname'] : '';
-        $paymentAddress['lastname'] = isset($this->request->post['lastname']) ? $this->request->post['lastname'] : '';
-        $paymentAddress['address_1'] = isset($this->request->post['address_1']) ? $this->request->post['address_1'] : '';
-        $paymentAddress['address_2'] = isset($this->request->post['address_2']) ? $this->request->post['address_2'] : '';
-        $paymentAddress['postcode'] = isset($this->request->post['postcode']) ? $this->request->post['postcode'] : '';
-        $paymentAddress['city'] = isset($this->request->post['city']) ? $this->request->post['city'] : '';
-        $paymentAddress['zone_id'] = isset($this->request->post['zone_id']) ? $this->request->post['zone_id'] : '';
-        $paymentAddress['country_id'] = isset($this->request->post['country_id']) ? $this->request->post['country_id'] : '';              
-        
-        $shippingAddress = array();
-        $shippingAddress['firstname'] = isset($this->request->post['shipping_firstname']) ? $this->request->post['shipping_firstname'] : '';
-        $shippingAddress['lastname'] = isset($this->request->post['shipping_lastname']) ? $this->request->post['shipping_lastname'] : '';
-        $shippingAddress['address_1'] = isset($this->request->post['shipping_address_1']) ? $this->request->post['shipping_address_1'] : '';
-        $shippingAddress['address_2'] = isset($this->request->post['shipping_address_2']) ? $this->request->post['shipping_address_2'] : '';
-        $shippingAddress['postcode'] = isset($this->request->post['shipping_postcode']) ? $this->request->post['shipping_postcode'] : '';
-        $shippingAddress['city'] = isset($this->request->post['shipping_city']) ? $this->request->post['shipping_city'] : '';
-        $shippingAddress['zone_id'] = isset($this->request->post['shipping_zone_id']) ? $this->request->post['shipping_zone_id'] : '';
-        $shippingAddress['country_id'] = isset($this->request->post['shipping_country_id']) ? $this->request->post['shipping_country_id'] : ''; 
-        
-        $logged = $this->customer->isLogged();
-        $newShippingAddress = $this->request->post['shipping_address'] === 'new';
-        
-        if ($logged) {
-            $newPaymentAddress = $this->request->post['payment_address'] === 'new';
+        if ((! $logged) || $newPaymentAddress) {
+            $paymentAddress = array();
+            $paymentAddress['firstname']    = isset($this->request->post['firstname']) ? $this->request->post['firstname'] : '';
+            $paymentAddress['lastname']     = isset($this->request->post['lastname']) ? $this->request->post['lastname'] : '';
+            $paymentAddress['address_1']    = isset($this->request->post['address_1']) ? $this->request->post['address_1'] : '';
+            $paymentAddress['address_2']    = isset($this->request->post['address_2']) ? $this->request->post['address_2'] : '';
+            $paymentAddress['postcode']     = isset($this->request->post['postcode']) ? $this->request->post['postcode'] : '';
+            $paymentAddress['city']         = isset($this->request->post['city']) ? $this->request->post['city'] : '';
+            $paymentAddress['zone_id']      = isset($this->request->post['zone_id']) ? $this->request->post['zone_id'] : '';
+            $paymentAddress['country_id']   = isset($this->request->post['country_id']) ? $this->request->post['country_id'] : '';
+
+            return $paymentAddress;
             
-            if ($newPaymentAddress) {
-                $this->model_account_address->addAddress($paymentAddress);
-            } else {
-                $address_id = $this->request->post['address_id'];
-                $paymentAddress = $this->model_account_address->getAddress($address_id);                
-            }
-            
-            if ($newShippingAddress) {
-                $this->model_account_address->addAddress($newShippingAddress);
-            } else {
-                $shipping_address_id = $this->request->post['shipping_address_id'];
-                $shippingAddress = $this->model_account_address->getAddress($shipping_address_id);                                
-            }
-            
-        } else {
-            if ($newShippingAddress) {
-                $this->model_account_address->addAddress($shippingAddress);
-            } else {
-                $shippingAddress = $paymentAddress;
-            }
+        }
+
+        $address_id = $this->request->post['address_id'];
+        return $this->model_account_address->getAddress($address_id);
+    }
+    
+    private function getShippingAddress($logged, $newShippingAddress)
+    {
+        if ((! $logged) || $newShippingAddress) {
+            $shippingAddress = array();
+            $shippingAddress['firstname']   = isset($this->request->post['shipping_firstname']) ? $this->request->post['shipping_firstname'] : '';
+            $shippingAddress['lastname']    = isset($this->request->post['shipping_lastname']) ? $this->request->post['shipping_lastname'] : '';
+            $shippingAddress['address_1']   = isset($this->request->post['shipping_address_1']) ? $this->request->post['shipping_address_1'] : '';
+            $shippingAddress['address_2']   = isset($this->request->post['shipping_address_2']) ? $this->request->post['shipping_address_2'] : '';
+            $shippingAddress['postcode']    = isset($this->request->post['shipping_postcode']) ? $this->request->post['shipping_postcode'] : '';
+            $shippingAddress['city']        = isset($this->request->post['shipping_city']) ? $this->request->post['shipping_city'] : '';
+            $shippingAddress['zone_id']     = isset($this->request->post['shipping_zone_id']) ? $this->request->post['shipping_zone_id'] : '';
+            $shippingAddress['country_id']  = isset($this->request->post['shipping_country_id']) ? $this->request->post['shipping_country_id'] : ''; 
+
+            return $shippingAddress;            
         }
         
-        $this->session->data['payment_address'] = $paymentAddress;
-        $this->session->data['shipping_address'] = $shippingAddress;
-    }    
+        $shipping_address_id = $this->request->post['shipping_address_id'];
+        return $this->model_account_address->getAddress($shipping_address_id);
+    }
     
-    private function validateUserRegistration() {
+    private function validatePaymentAddress() {
         if ((utf8_strlen($this->request->post['firstname']) < 1) || (utf8_strlen($this->request->post['firstname']) > 32)) {
             $this->data['error']['firstname'] = 'O nome deve ter entre 1 e 32 caracteres.';
         }
@@ -179,19 +189,7 @@ class ControllerCheckoutCheckout extends Controller {
         if ((utf8_strlen($this->request->post['lastname']) < 1) || (utf8_strlen($this->request->post['lastname']) > 32)) {
             $this->data['error']['lastname'] = 'O sobrenome deve ter entre 1 e 32 caracteres.';
         }
-
-        if ((utf8_strlen($this->request->post['email']) > 96) || !preg_match('/^[^\@]+@.*\.[a-z]{2,6}$/i', $this->request->post['email'])) {
-            $this->data['error']['email'] = 'O e-mail informado não é válido.';
-        }
-
-        if ($this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
-            $this->data['error_warning'] = 'Atenção: Este e-mail já está cadastrado em nossa loja.';
-        }
-
-        if ((utf8_strlen($this->request->post['telephone']) < 10) || (utf8_strlen($this->request->post['telephone']) > 11)) {
-            $this->data['error']['telephone'] = 'O telefone deve ter entre 10 e 11 dígitos, incluindo o DDD.';
-        }
-
+        
         if ((utf8_strlen($this->request->post['address_1']) < 3) || (utf8_strlen($this->request->post['address_1']) > 128)) {
             $this->data['error']['address_1'] = 'O endereço deve ter entre 3 e 128 caracteres.';
         }
@@ -204,7 +202,7 @@ class ControllerCheckoutCheckout extends Controller {
             $this->data['error']['city'] = 'A cidade deve ter entre 2 e 50 caracteres.';
         }
 
-        if (utf8_strlen($this->request->post['postcode'] != 8)) {
+        if (utf8_strlen($this->request->post['postcode']) != 8) {
             $this->data['error']['postcode'] = 'O CEP deve ter 8 digítos.';
         }
 
@@ -215,15 +213,11 @@ class ControllerCheckoutCheckout extends Controller {
         if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '') {
             $this->data['error']['zone'] = 'Selecione um estado.';
         }
-
-        if ((utf8_strlen($this->request->post['password']) < 4) || (utf8_strlen($this->request->post['password']) > 20)) {
-            $this->data['error']['password'] = 'A senha deve ter entre 4 e 20 caracteres.';
-        }
-
-        if ($this->request->post['confirm'] != $this->request->post['password']) {
-            $this->data['error']['confirm'] = 'A confirmação da senha deve ser igual a senha.';
-        }
         
+        return isset($this->data['error']);
+    }
+    
+    private function validateShippingAddress() {
         if ($this->request->post['shipping_address'] != 'same') {
             if ((utf8_strlen($this->request->post['shipping_firstname']) < 1) || (utf8_strlen($this->request->post['shipping_firstname']) > 32)) {
                 $this->data['error']['shipping_firstname'] = 'O nome deve ter entre 1 e 32 caracteres.';
@@ -245,7 +239,7 @@ class ControllerCheckoutCheckout extends Controller {
                 $this->data['error']['shipping_city'] = 'A cidade deve ter entre 2 e 50 caracteres.';
             }
 
-            if (utf8_strlen($this->request->post['shipping_postcode'] != 8)) {
+            if (utf8_strlen($this->request->post['shipping_postcode']) != 8) {
                 $this->data['error']['shipping_postcode'] = 'O CEP deve ter 8 digítos.';
             }
 
@@ -255,26 +249,61 @@ class ControllerCheckoutCheckout extends Controller {
 
             if (!isset($this->request->post['shipping_zone_id']) || $this->request->post['shipping_zone_id'] == '') {
                 $this->data['error']['zone'] = 'Selecione um estado.';
-            }            
+            }
+            
+            return isset($this->data['error']);
+        }
+        
+        return true;
+    }    
+    
+    private function validateUserRegistration() {
+        if ((utf8_strlen($this->request->post['email']) > 96) || !preg_match('/^[^\@]+@.*\.[a-z]{2,6}$/i', $this->request->post['email'])) {
+            $this->data['error']['email'] = 'O e-mail informado não é válido.';
+        }
+
+        if ($this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
+            $this->data['error_warning'] = 'Atenção: Este e-mail já está cadastrado em nossa loja.';
+        }
+
+        if ((utf8_strlen($this->request->post['telephone']) < 10) || (utf8_strlen($this->request->post['telephone']) > 11)) {
+            $this->data['error']['telephone'] = 'O telefone deve ter entre 10 e 11 dígitos, incluindo o DDD.';
+        }
+
+        if ((utf8_strlen($this->request->post['password']) < 4) || (utf8_strlen($this->request->post['password']) > 20)) {
+            $this->data['error']['password'] = 'A senha deve ter entre 4 e 20 caracteres.';
+        }
+
+        if ($this->request->post['confirm'] != $this->request->post['password']) {
+            $this->data['error']['confirm'] = 'A confirmação da senha deve ser igual a senha.';
+        }
+        
+        return isset($this->data['error']);
+    }
+    
+    private function saveData($logged, $newPaymentAddress, $newShippingAddress, &$paymentAddress, &$shippingAddress) {
+        
+        if ($logged) {
+            if ($newPaymentAddress) $this->model_account_address->addAddress($paymentAddress);
+            if ($newShippingAddress) $this->model_account_address->addAddress($shippingAddress);
+            
+        } else {
+            $this->model_account_customer->addCustomer($this->request->post);
+            $this->customer->login($this->request->post['email'], $this->request->post['password']);
+
+            if ($newShippingAddress) {
+                $this->model_account_address->addAddress($shippingAddress);
+            } else {
+                $shippingAddress = $paymentAddress;
+            }
+            
+            $this->session->data['account'] = 'register';
+            $payment_method = $this->request->post['payment_method'];
+            $this->load->model('payment/' . $payment_method);
+            $this->session->data['payment_method'] = $this->{'model_payment_' . $payment_method}->getMethod();            
         }
     }
     
-    private function saveCustomerPlusAddress()
-    {
-        $this->model_account_customer->addCustomer($this->request->post);
-
-        $this->session->data['account'] = 'register';
-
-        $payment_method = $this->request->post['payment_method'];
-        $this->load->model('payment/' . $payment_method);
-        $this->session->data['payment_method'] = $this->{'model_payment_' . $payment_method}->getMethod();
-    }
-
-    private function loginJustRegisteredUser()
-    {
-        $this->customer->login($this->request->post['email'], $this->request->post['password']);
-    }    
-
     private function createRedirectUrl()
     {
         $paymentMethod = $this->request->post['payment_method'];
@@ -721,8 +750,7 @@ class ControllerCheckoutCheckout extends Controller {
     }
     
     public function parcelamento($ajax = true) {
-        $juros = 1.99; // TODO: extrair constante
-        $taxa = $juros / 100;
+        $taxa = self::$JUROS / 100;
         $limiteDeParcelas = $this->config->get('akatus_limite_parcelas');
         $numeroParcelasSemJuros = $this->config->get('akatus_sem_juros');        
         $total = $this->getTotal();
@@ -753,7 +781,7 @@ class ControllerCheckoutCheckout extends Controller {
                 $valorParcela = ($total  * $taxa) / (1-(1 / pow(1 + $taxa, $j)));
                 $valorParcela =  round($valorParcela, 2);                
 
-                $parcelamentoHTML .= '<option value="'.$j.'">'.$j.'x de R$'.number_format($valorParcela, 2,',', '.').' com juros de '.number_format($juros, 2, ',', ',').'% a.m.</option>';
+                $parcelamentoHTML .= '<option value="'.$j.'">'.$j.'x de R$'.number_format($valorParcela, 2,',', '.').' com juros de '.number_format(self::$JUROS, 2, ',', ',').'% a.m.</option>';
             }
 
         }

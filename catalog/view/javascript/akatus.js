@@ -333,8 +333,14 @@ function enderecoCobrancaValido() {
 
 function enderecoEntregaValido() {
     var new_shipping_address = $('input[name=shipping_address]:checked').val() === 'new';
-    var different_address =  ! $('input[name=shipping_address]').is(':checked');
+    var different_address;
     
+    if (logged) {
+        different_address = $('input[name=shipping_address]:checked').val() === 'new';
+    } else {
+        different_address = $('input[name=shipping_address]').is(':checked');
+    }
+
     if (shipping_required) {
         if (new_shipping_address || different_address) {
             var firstname = $('input[name=shipping_firstname]');
@@ -458,7 +464,7 @@ function validacaoCartaoCredito() {
 
 function meioPagamentoValido() {
     var payment_method_selected = $('input[name=payment_method]').is(':checked');
-    var payment_method = $('input[name=payment_method]').val();
+    var payment_method = $('input[name=payment_method]:checked').val();
 
     if (payment_method_selected) {
         

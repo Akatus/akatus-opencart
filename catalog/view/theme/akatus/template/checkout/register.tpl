@@ -57,7 +57,7 @@
     <br />
     
     <span id="payment-postcode-required" class="required">*</span> CEP:<br />
-    <input type="text" name="postcode" value="<?php echo $postcode; ?>" class="akatus-field" />
+    <input type="text" name="postcode" value="<?php if (isset($postcode)) echo $postcode ?>" class="akatus-field" />
     <?php if (isset($error['postcode'])) echo "<span class='error'>" . $error['postcode'] . "</span>" ?>
     <br />
     
@@ -82,8 +82,8 @@
 </div>
 <div>
     <?php if ($shipping_required) { ?>
-        <input type="checkbox" name="shipping_address" value="same" id="shipping" checked="checked" />
-        <label for="shipping">O endereço de entrega é o mesmo de cobrança.</label>
+        <input type="checkbox" name="shipping_address" value="new" id="shipping" />
+        <label for="shipping">Entregar em outro endereço.</label>
     <?php } ?>
     <br />
     <br />    

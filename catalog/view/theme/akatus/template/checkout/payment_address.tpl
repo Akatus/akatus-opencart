@@ -53,6 +53,9 @@
 
     <span class="required">*</span> Estado:
     <select name="zone_id" class="akatus-field">--- Selecione ---</select>
+    
+    <br />
+    <br />
 </div>
 
 <script>

@@ -73,7 +73,6 @@ class AkatusPaymentBaseController extends Controller {
         $data['payment_zone_id']            = $payment_address['zone_id'];
         $data['payment_country_id']         = $payment_address['country_id'];
         
-        // TODO: verificar
         $data['payment_zone']               = isset($payment_address['zone']) ? $payment_address['zone'] : '';
         $data['payment_country']            = isset($payment_address['country']) ? $payment_address['country'] : '';
 

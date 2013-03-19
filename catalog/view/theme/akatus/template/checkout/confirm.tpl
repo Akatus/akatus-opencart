@@ -1,5 +1,5 @@
 <div class="checkout-product">
-    <h2>Finalizar Compra</h2>
+    <h2>Resumo da Compra</h2>
     
   <table>
     <thead>
