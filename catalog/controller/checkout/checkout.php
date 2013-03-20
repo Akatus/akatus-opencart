@@ -4,6 +4,10 @@ class ControllerCheckoutCheckout extends Controller {
     private static $JUROS = 1.99;
     
     public function index() {
+        if ((! isset($_GET['register'])) && (! $this->customer->isLogged())) {
+            $this->redirect($this->url->link('checkout/login'));
+        }
+        
         $this->language->load('checkout/checkout');
 
         $this->load->model('account/address');        
@@ -297,7 +301,6 @@ class ControllerCheckoutCheckout extends Controller {
                 $shippingAddress = $paymentAddress;
             }
             
-            $this->session->data['account'] = 'register';
             $payment_method = $this->request->post['payment_method'];
             $this->load->model('payment/' . $payment_method);
             $this->session->data['payment_method'] = $this->{'model_payment_' . $payment_method}->getMethod();            
