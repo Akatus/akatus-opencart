@@ -293,7 +293,7 @@ class AkatusPaymentBaseController extends Controller {
 				<enderecos>
 		            <endereco>
 		                <tipo>entrega</tipo>
-		                <logradouro>'.$order->row['payment_address_1'].'</logradouro>
+		                <logradouro>'.$order->row['payment_address_1']. ' - ' .$order->row['payment_address_2']. '</logradouro>
 		                <cidade>'.utf8_decode($order->row['payment_city']).'</cidade>
 		                <estado>'.$state->row['code'].'</estado>
 		                <pais>'.$country->row['iso_code_3'].'</pais>
