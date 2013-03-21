@@ -1,50 +1,10 @@
 ﻿<?php
-/*
-+---------------------------------------------------+
-| 			 MÓDULO DE PAGAMENTO AKATUS 			|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- **/
-
-class Transacao
-{
-    const AGUARDANDO_PAGAMENTO  = 'Aguardando Pagamento';
-    const EM_ANALISE            = 'Em Análise';
-    const APROVADO              = 'Aprovado';
-    const CANCELADO             = 'Cancelado';
-    const DEVOLVIDO             = 'Devolvido';
-    const COMPLETO              = 'Completo';
-    
-    const ID_PROCESSING             = 2;
-    
-    const ID_AGUARDANDO_PAGAMENTO   = 10200;
-    const ID_EM_ANALISE             = 10201;
-    const ID_APROVADO               = 10202;
-    const ID_CANCELADO              = 10203;
-    const ID_COMPLETO               = 10204;
-    const ID_DEVOLVIDO              = 10205;
-}
 
 if(! empty($_POST))
 {	
     require_once('../config.php');   
     require_once(DIR_SYSTEM . 'startup.php');
+    require_once('transacao.php');
     require_once('../catalog/model/checkout/order.php');
 
     $registry = new Registry();
@@ -59,7 +19,7 @@ if(! empty($_POST))
     $settings = $db->query("SELECT value FROM " . DB_PREFIX . "setting s where s.key='akatus_token_nip'");
     $tokenNip = $settings->row['value'];
     
-    if($tokenNip != $_POST['token']) die;
+    if((! isset($_POST['token'])) || ($_POST['token'] != $tokenNip)) die;
 
     $orders = $db->query('SELECT * FROM `' . DB_PREFIX . 'order` WHERE order_id = ' . $_POST["referencia"]);
     $order = $orders->row;
@@ -70,7 +30,7 @@ if(! empty($_POST))
         if ($novoStatus == Transacao::ID_COMPLETO) {
             $orderModel->confirm($order['order_id'], $novoStatus, $notify = true);
         } else {
-            $orderModel->update($order['order_id'], $novoStatus);
+            $orderModel->update($order['order_id'], $novoStatus, $notify = true);
         }
     }
 }

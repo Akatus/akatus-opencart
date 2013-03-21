@@ -1,13 +1,19 @@
 <?php
 
+require_once(DIR_SYSTEM . '../akatus/transacao.php');
+
 class AkatusPaymentBaseController extends Controller {
 
-    protected function saveOrder() {
+	public function __construct($registry) {
+		$this->registry = $registry;
+        
         $this->language->load('checkout/checkout');
         $this->load->model('affiliate/affiliate');
         $this->load->model('setting/extension');
-        $this->load->model('checkout/order');
-        
+        $this->load->model('checkout/order');        
+	}
+    
+    protected function saveOrder() {
         $total_data = array();
         $sort_order = array();
         $taxes = $this->cart->getTaxes();
@@ -237,24 +243,18 @@ class AkatusPaymentBaseController extends Controller {
         return $this->model_checkout_order->addOrder($data);
     }
     
-    protected function getDatabaseConnection() {
-        $registry = new Registry();
-        $loader = new Loader($registry);
-        $registry->set('load', $loader);
-
-        $config = new Config();
-        $registry->set('config', $config);
-
-        $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-        $registry->set('db', $db);
+    protected function getOrder($orderId) {
+        $order = $this->model_checkout_order->getOrder($orderId);
+        $orderProducts = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = " . $orderId);
+        $order['order_products'] = $orderProducts->rows;        
         
-        return $db;
-    }
+        return $order;
+    }    
     
-    protected function getXML($order, $state, $country) {
-        $paymentCode = $order->row['payment_code'];
+    protected function getXML($order) {
+        $paymentCode = $order['payment_code'];
         $desconto = $this->config->get($paymentCode . '_desconto');
-        $valor_total_compra = number_format($order->row['total'], 2, '.', '');
+        $valor_total_compra = number_format($order['total'], 2, '.', '');
 
         $meioDePagamento = null;
         
@@ -279,8 +279,6 @@ class AkatusPaymentBaseController extends Controller {
             $valor_total_compra = number_format($valor_total_compra - ($valor_total_compra * ($desconto / 100)), 2, '.', '');
         }
 
-        // TODO: iterar produtos e corrigir valores
-        
         $xml = '<?xml version="1.0" encoding="utf-8"?><carrinho>
           <recebedor>
               <api_key>' . $this->config->get('akatus_api_key') . '</api_key>
@@ -288,42 +286,50 @@ class AkatusPaymentBaseController extends Controller {
           </recebedor>
           
           <pagador>
-              <nome>' . $order->row['firstname'] . ' ' . $order->row['lastname'] . '</nome>
-              <email>' . $order->row['email'] . '</email>
+              <nome>' . $order['firstname'] . ' ' . $order['lastname'] . '</nome>
+              <email>' . $order['email'] . '</email>
 				<enderecos>
 		            <endereco>
 		                <tipo>entrega</tipo>
-		                <logradouro>'.$order->row['payment_address_1']. ' - ' .$order->row['payment_address_2']. '</logradouro>
-		                <cidade>'.utf8_decode($order->row['payment_city']).'</cidade>
-		                <estado>'.$state->row['code'].'</estado>
-		                <pais>'.$country->row['iso_code_3'].'</pais>
-		                <cep>'.$order->row['payment_postcode'].'</cep>
+		                <logradouro>'.$order['payment_address_1'].'</logradouro>
+                        <bairro>'.$order['payment_address_2'].'</bairro>
+		                <cidade>'.utf8_decode($order['payment_city']).'</cidade>
+		                <estado>'.$order['payment_zone_code'].'</estado>
+		                <pais>'.$order['payment_iso_code_3'].'</pais>
+		                <cep>'.$order['payment_postcode'].'</cep>
 		            </endereco>
 		        </enderecos>
 
               <telefones>
                   <telefone>
                       <tipo>residencial</tipo>
-                      <numero>' . substr(preg_replace("/[^0-9]/", "", $order->row['telephone']), 0, 11) . '</numero>
+                      <numero>' . substr(preg_replace("/[^0-9]/", "", $order['telephone']), 0, 11) . '</numero>
                   </telefone>
               </telefones>
           </pagador>
-          <produtos>
+          
+          <produtos>';
 
-              <produto>
-                  <codigo>1</codigo>
-                  <descricao>Pedido ' . $order->row['order_id'] . ' em http://' . $_SERVER['HTTP_HOST'] . '/</descricao>
-                  <quantidade>1</quantidade>
-                  <preco>' . $valor_total_compra . '</preco>
-                  <peso>0.0</peso>
-                  <frete>0.00</frete>
-                  <desconto>' . $desconto . '</desconto>
-              </produto>
-          </produtos>
+        foreach ($order['order_products'] as $order_product) {
+            $valor_produto = number_format($order_product['price'], 2, '.', '');
+            
+            $xml .= '<produto>
+                         <codigo>' . $order_product['product_id'] . '</codigo>
+                         <descricao>' . $order_product['name'] . '/</descricao>
+                         <quantidade>' . $order_product['quantity'] . '</quantidade>
+                         <preco>' . $valor_produto . '</preco>
+                         <peso>0.00</peso>
+                         <frete>0.00</frete>
+                         <desconto>0.00</desconto>
+                     </produto>';           
+        }
+        
 
+        $xml .= '</produtos>
+              
           <transacao>
           
-            <referencia>' . ($order->row['order_id']) . '</referencia>
+            <referencia>' . ($order['order_id']) . '</referencia>
             <meio_de_pagamento>' . $meioDePagamento . '</meio_de_pagamento>
 
             <desconto_total>' . ( number_format(($desconto / 100) * $valor_total_compra, 2, '.', '') ) . '</desconto_total>
@@ -342,7 +348,7 @@ class AkatusPaymentBaseController extends Controller {
                 <portador>
                     <nome>' . strtoupper($_POST['cartao_titular']) . '</nome>
                     <cpf>' . preg_replace("/[^0-9]/","",$_POST['cartao_cpf']) . '</cpf>
-                    <telefone>' . substr(preg_replace("/[^0-9]/", "", $order->row['telephone']), 0, 11) . '</telefone>
+                    <telefone>' . substr(preg_replace("/[^0-9]/", "", $order['telephone']), 0, 11) . '</telefone>
 			</portador>';
         }
 		

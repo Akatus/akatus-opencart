@@ -4,7 +4,7 @@
 <input type="radio" name="shipping_address" value="existing" id="shipping-address-existing" checked="checked" />
 <label for="shipping-address-existing">Quero utilizar um endereço já cadastrado</label>
 <div id="shipping-existing">
-  <select name="shipping_address_id" style="width: 100%; margin-bottom: 15px;" size="5">
+  <select name="shipping_address_id" style="width: 100%; margin-bottom: 15px;" size="3">
     <?php foreach ($addresses as $address) { ?>
     <?php if ($address['address_id'] == $address_id) { ?>
     <option value="<?php echo $address['address_id']; ?>" selected="selected"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>

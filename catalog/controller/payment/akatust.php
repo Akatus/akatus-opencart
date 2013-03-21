@@ -5,18 +5,14 @@ require_once 'akatus_base.php';
 class ControllerPaymentAkatust extends AkatusPaymentBaseController {
 
     public function index() {
-        $orderId = $this->saveOrder();
-        $this->session->data['order_id'] = $orderId;
-
-        $db = $this->getDatabaseConnection();
+        $order_id = $this->saveOrder();
+        $order = $this->getOrder($order_id);
         
-        $order = $db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . $orderId ."' LIMIT 1");
-		$state = $db->query("SELECT code FROM `" . DB_PREFIX . "zone` WHERE zone_id = ".$order->row['payment_zone_id']);
-		$country = $db->query("SELECT iso_code_3 FROM `" . DB_PREFIX . "country` WHERE country_id = ".$order->row['payment_country_id']);
-        
-        $xml = $this->getXML($order, $state, $country);
+        $xml = $this->getXML($order);
         $url = $this->getUrl();
 
+        $this->session->data['order_id'] = $order_id;
+        
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -33,7 +29,7 @@ class ControllerPaymentAkatust extends AkatusPaymentBaseController {
         $comment = "Caso não tenha concluído o pagamento através do seu cartão de débito, utilize o link abaixo: \n<br>";
         $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
 
-        $this->model_checkout_order->confirm($orderId, $this->config->get('akatust_padrao'), $comment);
+        $this->model_checkout_order->update($order_id, Transacao::ID_PROCESSING, $comment, $notify = true);
 
         $this->cart->clear();
         unset($this->session->data['shipping_method']);
