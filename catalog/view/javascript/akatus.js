@@ -19,6 +19,10 @@ var MSG_METODO_ENTREGA_INVALIDO = 'Por favor, selecione o Método de Entrega.';
 var MSG_BANCO_TEF_INVALIDO = 'Por favor, selecione o banco relacionado ao TEF.';
 var MSG_MEIO_PAGAMENTO_INVALIDO = 'Por favor, selecione o Meio de Pagamento.';
 
+var MSG_NUMERO_CARTAO_INVALIDO = "Por favor, informe corretamente o número do cartão de crédito.";
+var MSG_CODIGO_SEG_INVALIDO_3 = "Atenção, o Código de Segurança deve ter 3 dígitos.";
+var MSG_CODIGO_SEG_INVALIDO_4 = "Atenção, o Código de Segurança deve ter 4 dígitos.";
+
 var AKATUS_CARTAO_CREDITO = 'akatus';
 var AKATUS_BOLETO = 'akatusb';
 var AKATUS_TEF = 'akatust';
@@ -525,18 +529,14 @@ function cartaoValido()
 
     if (isValid) {
         var cardNumbersOnly = cardNumber.replace(/ /g,"");
-        var cardNumberLength = cardNumbersOnly.length;
-        var lengthValid = false;
         var securityCode = $('input[name=cartao_codigo]');
         var prefixRegExp;
 
 		switch(cardType){
             
 			case "cartao_master":
-				lengthValid = (cardNumberLength == 16);
-				
 				if (securityCode.val().length != 3) {
-					alert("Atenção, o Código de Segurança deve ter 3 dígitos.");
+					alert(MSG_CODIGO_SEG_INVALIDO_3);
                     securityCode.focus();
 					return false;
 				}
@@ -545,10 +545,8 @@ function cartaoValido()
                 break;
                 
 			 case "cartao_diners":
-				lengthValid = (cardNumberLength == 14);
-				
 				if (securityCode.val().length != 3) {
-					alert("Atenção, o Código de Segurança deve ter 3 dígitos.");
+					alert(MSG_CODIGO_SEG_INVALIDO_3);
                     securityCode.focus();
 					return false;
 				}
@@ -557,10 +555,8 @@ function cartaoValido()
                 break;                
                 
 			case "cartao_visa":
-				lengthValid = (cardNumberLength == 16 || cardNumberLength == 13);
-				
 				if (securityCode.val().length != 3) {
-					alert("Atenção, o Código de Segurança deve ter 3 dígitos.");
+					alert(MSG_CODIGO_SEG_INVALIDO_3);
                     securityCode.focus();
 					return false;
 				}
@@ -569,10 +565,8 @@ function cartaoValido()
                 break;
 			
 			case "cartao_amex":
-				lengthValid = (cardNumberLength == 15);
-
 				if (securityCode.val().length != 4) {
-					alert("Atenção, o Código de Segurança deve ter 4 dígitos.");
+					alert(MSG_CODIGO_SEG_INVALIDO_4);
                     securityCode.focus();
 					return false;
 				}
@@ -581,10 +575,8 @@ function cartaoValido()
                 break;
 			
 			case "cartao_elo":
-				lengthValid = (cardNumberLength == 16);
-				
 				if (securityCode.val().length != 3) {
-					alert("Atenção, o Código de Segurança deve ter 3 dígitos.");
+					alert(MSG_CODIGO_SEG_INVALIDO_3);
                     securityCode.focus();
 					return false;
 				}
@@ -600,7 +592,7 @@ function cartaoValido()
 //		prefixIsValid = prefixRegExp.test(cardNumbersOnly);
         
     } else {
-		alert("Por favor, informe corretamente o número do cartão de crédito.");
+		alert(MSG_NUMERO_CARTAO_INVALIDO);
         $('input[name=cartao_numero]').focus();
 		return false;
 	}

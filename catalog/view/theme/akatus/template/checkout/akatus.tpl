@@ -5,7 +5,7 @@
         <ul id="cartoes_akatus">
             <li>
                 <label><img id='cartao_visa'  src='image/akatus/cartao_visa.gif' ><br>
-                    <input name='bandeira_cartao' type='radio' value='cartao_visa' checked="checked" />
+                    <input name='bandeira_cartao' type='radio' value='cartao_visa' />
                 </label>
             </li>
 
@@ -56,7 +56,7 @@
                         <tr>
                             <td><strong>N&uacute;mero do Cart&atilde;o </strong></td>
                             <td>&nbsp;</td>
-                            <td><input name="cartao_numero" id="cartao_numero" type="text" size="60" />&nbsp;</td>
+                            <td><input name="cartao_numero" id="cartao_numero" type="text" size="60" maxlength="16" />&nbsp;</td>
                         </tr>
                         <tr>
                             <td><strong>Validade</strong></td>

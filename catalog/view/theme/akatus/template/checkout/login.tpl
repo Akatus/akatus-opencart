@@ -17,7 +17,7 @@
     </div>
     <div class="right">
       <h2><?php echo $text_returning_customer; ?></h2>
-      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
+      <form id="login" action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
         <div class="content">
           <p><?php echo $text_i_am_returning_customer; ?></p>
           <b><?php echo $entry_email; ?></b><br />
@@ -29,7 +29,7 @@
           <br />
           <a href="<?php echo $forgotten; ?>"><?php echo $text_forgotten; ?></a><br />
           <br />
-          <input type="button" id="button-login" value="<?php echo $button_login; ?>" class="button" />
+          <input type="submit" id="button-login" value="<?php echo $button_login; ?>" class="button" />
         </div>
       </form>
     </div>
@@ -39,7 +39,9 @@
 <script type="text/javascript">
 
     $(function() {
-        $('#button-login').live('click', function() {
+        $('#login').submit(function(evento) {
+            evento.preventDefault();
+        
             $.ajax({
                 url: 'index.php?route=checkout/login/validate',
                 type: 'post',
