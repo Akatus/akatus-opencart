@@ -315,7 +315,7 @@ class AkatusPaymentBaseController extends Controller {
             
             $xml .= '<produto>
                          <codigo>' . $order_product['product_id'] . '</codigo>
-                         <descricao>' . $order_product['name'] . '/</descricao>
+                         <descricao>' . $order_product['name'] . '</descricao>
                          <quantidade>' . $order_product['quantity'] . '</quantidade>
                          <preco>' . $valor_produto . '</preco>
                          <peso>0.00</peso>

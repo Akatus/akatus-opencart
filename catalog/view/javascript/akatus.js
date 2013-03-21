@@ -524,7 +524,7 @@ function cartaoValido()
 	var cardType = $('input[name=bandeira_cartao]:checked').val();
 	var cardNumber = $('input[name=cartao_numero]').val();
 	
-    var ccCheckRegExp = /[^\d]/;
+    var ccCheckRegExp = /[0-9]/;
 	
     isValid = ccCheckRegExp.test(cardNumber);
 
