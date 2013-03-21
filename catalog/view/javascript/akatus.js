@@ -183,6 +183,7 @@ $(function() {
     $('select[name=zone_id]').change(calculaFrete);
     $('input[name=payment_method]').change(mudarMeioPagamento);
     $('select[name=shipping_zone_id]').change(calculaFrete);
+    $('input[name=cartao_numero]').keyup(detectarBandeira);
     
     $('select[name=country_id]').change(atualizaListaPaises);
     $('select[name=country_id]').trigger('change');
@@ -525,12 +526,10 @@ function cartaoValido()
 	
     var ccCheckRegExp = /[^\d]/;
 	
-    isValid = ! ccCheckRegExp.test(cardNumber);
+    isValid = ccCheckRegExp.test(cardNumber);
 
     if (isValid) {
-        var cardNumbersOnly = cardNumber.replace(/ /g,"");
         var securityCode = $('input[name=cartao_codigo]');
-        var prefixRegExp;
 
 		switch(cardType){
             
@@ -540,8 +539,6 @@ function cartaoValido()
                     securityCode.focus();
 					return false;
 				}
-				
-				prefixRegExp = /^5[1-5]/;
                 break;
                 
 			 case "cartao_diners":
@@ -550,8 +547,6 @@ function cartaoValido()
                     securityCode.focus();
 					return false;
 				}
-				
-				prefixRegExp = /^3/;
                 break;                
                 
 			case "cartao_visa":
@@ -560,8 +555,6 @@ function cartaoValido()
                     securityCode.focus();
 					return false;
 				}
-                
-				prefixRegExp = /^4/;
                 break;
 			
 			case "cartao_amex":
@@ -570,8 +563,6 @@ function cartaoValido()
                     securityCode.focus();
 					return false;
 				}
-
-				prefixRegExp = /^3/;
                 break;
 			
 			case "cartao_elo":
@@ -580,17 +571,12 @@ function cartaoValido()
                     securityCode.focus();
 					return false;
 				}
-                
-				prefixRegExp = /^6/;
                 break;                
 			
 			default:
                 return false;
 		}
 
-//      TODO: detectar bandeira        
-//		prefixIsValid = prefixRegExp.test(cardNumbersOnly);
-        
     } else {
 		alert(MSG_NUMERO_CARTAO_INVALIDO);
         $('input[name=cartao_numero]').focus();
@@ -598,6 +584,78 @@ function cartaoValido()
 	}
 	
 	return true;
+}
+
+function detectarBandeira() {
+    var visa    = 'cartao_visa';
+    var master  = 'cartao_master';
+    var elo     = 'cartao_elo';
+    var amex    = 'cartao_amex';
+    var diners = 'cartao_diners';    
+    
+    var img_visa    = $('img#' + visa);
+    var img_master  = $('img#' + master);
+    var img_elo     = $('img#' + elo);
+    var img_amex    = $('img#' + amex);
+    var img_diners = $('img#' + diners);
+
+    var imagens = [img_visa, img_master, img_elo, img_amex, img_diners];
+
+    var input_visa    = $('input[value=' + visa + ']');
+    var input_master  = $('input[value=' + master + ']');
+    var input_elo     = $('input[value=' + elo + ']');
+    var input_amex    = $('input[value=' + amex + ']');
+    var input_diners = $('input[value=' + diners + ']');
+
+    var inputs = [input_visa, input_master, input_elo, input_amex, input_diners];
+    
+    if (($(this).val() === '')) {
+        if ($('input[name=bandeira_cartao]').is(':checked')) {
+            $('input[name=bandeira_cartao]:checked').prop('checked', false);
+            $(imagens).each(function() {
+                $(this).hide();
+            });
+        }
+        return false;
+    } 
+    
+    var first = $(this).val().charAt(0);
+    var second = $(this).val().charAt(1);
+
+    if (first === "4"){
+        destacarBandeira(imagens, visa);
+        selecionarInput(inputs, visa);        
+    }
+    else if (first === "5"){
+        destacarBandeira(imagens, master);
+        selecionarInput(inputs, master);
+    }
+    else if (first === "6"){
+        destacarBandeira(imagens, elo);
+        selecionarInput(inputs, elo);
+    }
+    else if ((first === "3") && ((second === "4") || (second === "7"))){
+        destacarBandeira(imagens, amex);
+        selecionarInput(inputs, amex);
+    }
+    else if ((first === "3") && ((second !== "4") && (second !== "7"))){
+        destacarBandeira(imagens, diners);
+        selecionarInput(inputs, diners);
+    }
+}
+
+function destacarBandeira(imagens, imagem_destacada) {
+    $(imagens).each(function() {
+        imagem = $(this);
+        (imagem.attr('id') === imagem_destacada) ? imagem.show() : imagem.hide();
+    });    
+}
+
+function selecionarInput(inputs, input_selecionado) {
+    $(inputs).each(function() {
+        input = $(this);
+        if (input.val() === input_selecionado) input.attr('checked', 'checked');
+    });    
 }
 
 function mostrar_popup() {
@@ -608,4 +666,4 @@ function mostrar_popup() {
 function ocultar_popup() {
     var popup = document.getElementById('popup');
     popup.style.display = 'none';
-}
+}
