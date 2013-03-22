@@ -28,19 +28,19 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
 
         if ($akatus['resposta']['status'] == 'erro') {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=4&msg=" . urlencode($akatus['resposta']['descricao']) . "';</script>";            
-            $this->model_checkout_order->update($order_id, Transacao::ID_FAILED, $comment = '', $notify = false);
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_FAILED, $comment = '', $notify = false);
 
         } else if ($akatus['resposta']['status'] == 'Em Análise') {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=1';</script>";     
-            $this->model_checkout_order->update($order_id, Transacao::ID_EM_ANALISE, $comment = '', $notify = true);
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_EM_ANALISE, $comment = '', $notify = true);
             
         } else if ($akatus['resposta']['status'] == 'Cancelado') {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=2';</script>";            
-            $this->model_checkout_order->update($order_id, Transacao::ID_CANCELADO, $comment = '', $notify = true);
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_CANCELADO, $comment = '', $notify = true);
             
         } else if ($akatus['resposta']['status'] == 'Aprovado') {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=3';</script>";
-            $this->model_checkout_order->update($order_id, Transacao::ID_APROVADO, $comment = '', $notify = true);
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_APROVADO, $comment = '', $notify = true);
         }
 
         $this->cart->clear();

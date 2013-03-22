@@ -25,14 +25,7 @@ if(! empty($_POST))
     $order = $orders->row;
 
     $novoStatus = getNovoStatus($_POST['status'], $order['order_status_id']);
-
-    if ($novoStatus) {
-        if ($novoStatus == Transacao::ID_COMPLETO) {
-            $orderModel->confirm($order['order_id'], $novoStatus, $notify = true);
-        } else {
-            $orderModel->update($order['order_id'], $novoStatus, $notify = true);
-        }
-    }
+    $orderModel->update($order['order_id'], $novoStatus, $notify = true);
 }
 
 

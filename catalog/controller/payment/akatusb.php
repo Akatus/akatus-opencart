@@ -29,7 +29,7 @@ class ControllerPaymentAkatusb extends AkatusPaymentBaseController {
         $comment = "Link para o pagamento do Boleto Bancário: \n<br>";
         $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
 
-        $this->model_checkout_order->update($order_id, Transacao::ID_AGUARDANDO_PAGAMENTO, $comment, $notify = true);
+        $this->model_checkout_order->confirm($order_id, $this->config->get('akatusb_padrao'), $comment, $notify = true);
 
         $this->cart->clear();
         unset($this->session->data['shipping_method']);
