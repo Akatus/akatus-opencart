@@ -58,7 +58,13 @@ class ControllerCheckoutCheckout extends Controller {
             $this->loadDataFromLoggedCustomer();
         }
         
-        $this->findShippingMethods($ajax = false);
+        $shippingRequired = $this->cart->hasShipping();
+        $this->data['shipping_required'] = $shippingRequired;
+        
+        if ($shippingRequired) {
+            $this->findShippingMethods($ajax = false);
+        }
+
         $this->loadPaymentMethods();
         $this->calculate($ajax = false);
         $this->parcelamento($ajax = false);
@@ -79,11 +85,18 @@ class ControllerCheckoutCheckout extends Controller {
             
             $errors = false;
             $logged = $this->customer->isLogged();
-            $newShippingAddress = isset($this->request->post['shipping_address']) && $this->request->post['shipping_address'] === 'new';        
-            $newPaymentAddress = isset($this->request->post['payment_address']) && $this->request->post['payment_address'] === 'new';            
+            $hasShipping = $this->cart->hasShipping();
             
+            $newPaymentAddress = isset($this->request->post['payment_address']) && $this->request->post['payment_address'] === 'new';            
             $paymentAddress = $this->getPaymentAddress($logged, $newPaymentAddress);
-            $shippingAddress = $this->getShippingAddress($logged, $newShippingAddress);
+            
+            if ($hasShipping) {
+                $newShippingAddress = isset($this->request->post['shipping_address']) && $this->request->post['shipping_address'] === 'new';        
+                $shippingAddress = $this->getShippingAddress($logged, $newShippingAddress);
+            } else {
+                $shippingAddress = null;
+                $newShippingAddress = false;
+            }
             
             if ($logged) {
                 if ($newPaymentAddress) {
@@ -107,7 +120,7 @@ class ControllerCheckoutCheckout extends Controller {
                 return $this->index();
                 
             } else {
-                $this->saveData($logged, $newPaymentAddress, $newShippingAddress, $paymentAddress, $shippingAddress);
+                $this->saveData($logged, $newPaymentAddress, $newShippingAddress, $paymentAddress, $shippingAddress, $hasShipping);
             }
             
             $this->session->data['payment_address'] = $paymentAddress;
@@ -285,7 +298,7 @@ class ControllerCheckoutCheckout extends Controller {
         return isset($this->data['error']);
     }
     
-    private function saveData($logged, $newPaymentAddress, $newShippingAddress, &$paymentAddress, &$shippingAddress) {
+    private function saveData($logged, $newPaymentAddress, $newShippingAddress, &$paymentAddress, &$shippingAddress, $hasShipping) {
         
         if ($logged) {
             if ($newPaymentAddress) $this->model_account_address->addAddress($paymentAddress);
@@ -297,7 +310,7 @@ class ControllerCheckoutCheckout extends Controller {
 
             if ($newShippingAddress) {
                 $this->model_account_address->addAddress($shippingAddress);
-            } else {
+            } else if ($hasShipping) {
                 $shippingAddress = $paymentAddress;
             }
             
@@ -402,7 +415,6 @@ class ControllerCheckoutCheckout extends Controller {
     
     private function loadData() {
 		$this->data['logged'] = $this->customer->isLogged();
-		$this->data['shipping_required'] = $this->cart->hasShipping();
         $this->data['products'] = $this->cart->getProducts();
 		$this->data['vouchers'] = array();
 

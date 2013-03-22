@@ -131,6 +131,7 @@ class AkatusPaymentBaseController extends Controller {
             $data['shipping_country'] = '';
             $data['shipping_country_id'] = '';
             $data['shipping_tax_id'] = '';
+            $data['shipping_company_id'] = '';
             $data['shipping_address_format'] = '';
             $data['shipping_method'] = '';
             $data['shipping_code'] = '';
@@ -245,8 +246,12 @@ class AkatusPaymentBaseController extends Controller {
     
     protected function getOrder($orderId) {
         $order = $this->model_checkout_order->getOrder($orderId);
+        
         $orderProducts = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = " . $orderId);
-        $order['order_products'] = $orderProducts->rows;        
+        $shippingValue = $this->db->query("SELECT value FROM `" . DB_PREFIX . "order_total` WHERE order_id = " . $orderId . " AND code = 'shipping'");
+        
+        $order['order_products'] = $orderProducts->rows;
+        $order['shipping_value'] = (empty($shippingValue->row) ? 0 : $shippingValue->row['value']);
         
         return $order;
     }    
@@ -334,7 +339,7 @@ class AkatusPaymentBaseController extends Controller {
 
             <desconto_total>' . ( number_format(($desconto / 100) * $valor_total_compra, 2, '.', '') ) . '</desconto_total>
             <peso_total>0.00</peso_total>
-            <frete_total>0.00</frete_total>
+            <frete>' . $order['shipping_value'] . '</frete>
             <moeda>BRL</moeda>';
             
         $cartaoCredito = ($paymentCode === 'akatus');

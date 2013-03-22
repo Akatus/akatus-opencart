@@ -34,7 +34,7 @@
                 </div>
                 
                 <div id="shipping-address">
-                    <div><?php include 'shipping_address.tpl' ?></div>
+                    <div><?php if ($shipping_required) include 'shipping_address.tpl' ?></div>
                 </div>                
             </div>
             

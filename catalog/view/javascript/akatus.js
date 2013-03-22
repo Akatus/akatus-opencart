@@ -1,5 +1,5 @@
 var logged = $('#logged').val();
-var shipping_required = $('#shipping_required').val();
+var shipping_required = $('#shipping_required').val() === 'true';
 var email_pattern = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 var telephone_pattern = /[0-9]{10,11}/;
 
@@ -206,7 +206,7 @@ function validaFormulario(evento) {
     if (dadosCadastraisValidos() &&
         enderecoCobrancaValido() &&
         enderecoEntregaValido() &&
-        metodoEntregaValido() &&
+        metodoEntregaValido(shipping_required) &&
         meioPagamentoValido()) {
 
         return true;
@@ -409,10 +409,10 @@ function enderecoEntregaValido() {
     return true;
 }
 
-function metodoEntregaValido() {
+function metodoEntregaValido(shipping_required) {
     var shipping_method_selected = $('input[name=shipping_method]').is(':checked');
     
-    if (shipping_method_selected) {
+    if (shipping_method_selected || (! shipping_required)) {
         return true;
     } else {
         alert(MSG_METODO_ENTREGA_INVALIDO);
