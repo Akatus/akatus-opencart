@@ -32,7 +32,7 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
 
         } else if ($akatus['resposta']['status'] == 'Em Análise') {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=1';</script>";     
-            $this->model_checkout_order->confirm($order_id, Transacao::ID_EM_ANALISE, $comment = '', $notify = true);
+            $this->model_checkout_order->confirm($order_id, $this->config->get('akatus_padrao'), $comment = '', $notify = true);
             
         } else if ($akatus['resposta']['status'] == 'Cancelado') {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=2';</script>";            

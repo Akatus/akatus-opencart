@@ -29,7 +29,7 @@ class ControllerPaymentAkatust extends AkatusPaymentBaseController {
         $comment = "Caso não tenha concluído o pagamento através do seu cartão de débito, utilize o link abaixo: \n<br>";
         $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
 
-        $this->model_checkout_order->confirm($order_id, Transacao::ID_PROCESSING, $comment, $notify = true);
+        $this->model_checkout_order->confirm($order_id, $this->config->get('akatust_padrao'), $comment, $notify = true);
 
         $this->cart->clear();
         unset($this->session->data['shipping_method']);
