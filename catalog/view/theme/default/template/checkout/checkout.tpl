@@ -2,6 +2,8 @@
 <?php echo $column_left; ?>
 <?php echo $column_right; ?>
 
+<link href="akatus/estilos.css" rel="stylesheet" type="text/css" />
+
 <div id="content">
     <?php echo $content_top; ?>
     

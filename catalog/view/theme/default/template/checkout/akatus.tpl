@@ -1,5 +1,3 @@
-<link href="akatus/estilos.css" rel="stylesheet" type="text/css" />
-
 <div id="bloco_cc" style="width:100%; display:none; height:350px; margin-top: 130px;">
     <div id="bandeiras_akatus">
         <ul id="cartoes_akatus">
