@@ -11,7 +11,7 @@ class ControllerPaymentAkatust extends AkatusPaymentBaseController {
         $xml = $this->getXML($order);
         $url = $this->getUrl();
 
-        $this->session->data['order_id'] = $order_id;
+        $this->clearSession();
         
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -26,18 +26,19 @@ class ControllerPaymentAkatust extends AkatusPaymentBaseController {
 
         $akatus = $this->xml2array($response);
 
-        $comment = "Caso não tenha concluído o pagamento através do seu cartão de débito, utilize o link abaixo: \n<br>";
-        $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
+        if ($akatus['resposta']['status'] == 'erro') {
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_FAILED, $comment = '', $notify = false);
+            
+            $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=4&msg=" . urlencode($akatus['resposta']['descricao']) . "';</script>";
+            $this->response->setOutput($ouput);
+            
+        } else {
+            $comment = "Caso não tenha concluído o pagamento através do seu cartão de débito, utilize o link abaixo: \n<br>";
+            $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
 
-        $this->model_checkout_order->confirm($order_id, $this->config->get('akatust_padrao'), $comment, $notify = true);
+            $this->model_checkout_order->confirm($order_id, $this->config->get('akatust_padrao'), $comment, $notify = true);
 
-        $this->cart->clear();
-        unset($this->session->data['shipping_method']);
-        unset($this->session->data['payment_method']);
-        unset($this->session->data['comment']);
-        unset($this->session->data['order_id']);
-        unset($this->session->data['coupon']);
-
-        $this->redirect($akatus['resposta']['url_retorno']);
+            $this->redirect($akatus['resposta']['url_retorno']);
+        }
     }
 }

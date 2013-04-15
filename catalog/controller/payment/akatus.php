@@ -11,7 +11,7 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
         $xml = $this->getXML($order);
         $url = $this->getUrl();
         
-        $this->session->data['order_id'] = $order_id;
+        $this->clearSession();
         
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -42,13 +42,6 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
             $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=3';</script>";
             $this->model_checkout_order->confirm($order_id, Transacao::ID_APROVADO, $comment = '', $notify = true);
         }
-
-        $this->cart->clear();
-        unset($this->session->data['shipping_method']);
-        unset($this->session->data['payment_method']);
-        unset($this->session->data['order_id']);
-        unset($this->session->data['comment']);
-        unset($this->session->data['coupon']);
 
         $this->response->setOutput($ouput);
     }

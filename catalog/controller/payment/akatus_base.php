@@ -366,6 +366,15 @@ class AkatusPaymentBaseController extends Controller {
         return 'https://www.akatus.com/api/v1/carrinho.xml';
     }
     
+    protected function clearSession() {
+        $this->cart->clear();
+        unset($this->session->data['shipping_method']);
+        unset($this->session->data['payment_method']);
+        unset($this->session->data['comment']);
+        unset($this->session->data['order_id']);
+        unset($this->session->data['coupon']);        
+    }
+    
     protected function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
         if (!$contents)
             return array();

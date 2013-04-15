@@ -11,7 +11,7 @@ class ControllerPaymentAkatusb extends AkatusPaymentBaseController {
         $xml = $this->getXML($order);
         $url = $this->getUrl();
 
-        $this->session->data['order_id'] = $order_id;
+        $this->clearSession();
         
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -26,19 +26,20 @@ class ControllerPaymentAkatusb extends AkatusPaymentBaseController {
 
         $akatus = $this->xml2array($response);
 
-        $comment = "Link para o pagamento do Boleto Bancário: \n<br>";
-        $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
+        if ($akatus['resposta']['status'] == 'erro') {
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_FAILED, $comment = '', $notify = false);
 
-        $this->model_checkout_order->confirm($order_id, $this->config->get('akatusb_padrao'), $comment, $notify = true);
+            $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=4&msg=" . urlencode($akatus['resposta']['descricao']) . "';</script>";
+            $this->response->setOutput($ouput);
+            
+        } else {
+            $comment = "Link para o pagamento do Boleto Bancário: \n<br>";
+            $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
 
-        $this->cart->clear();
-        unset($this->session->data['shipping_method']);
-        unset($this->session->data['payment_method']);
-        unset($this->session->data['comment']);
-        unset($this->session->data['order_id']);
-        unset($this->session->data['coupon']);
+            $this->model_checkout_order->confirm($order_id, $this->config->get('akatusb_padrao'), $comment, $notify = true);
 
-        $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=5&url_boleto=" . urlencode($akatus['resposta']['url_retorno']) . "';</script>";
-        $this->response->setOutput($ouput);
+            $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=5&url_boleto=" . urlencode($akatus['resposta']['url_retorno']) . "';</script>";
+            $this->response->setOutput($ouput);            
+        }        
     }
 }

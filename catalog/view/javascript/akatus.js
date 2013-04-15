@@ -209,6 +209,9 @@ function validaFormulario(evento) {
         metodoEntregaValido(shipping_required) &&
         meioPagamentoValido()) {
 
+        $('input[type=submit]').val('Finalizando...');
+        $('input[type=submit]').disable();
+
         return true;
 
     } else {
@@ -485,7 +488,7 @@ function meioPagamentoValido() {
                 return validacaoTEF();
 
             default:
-                return false;
+                return true;
         }
         
     } else {
