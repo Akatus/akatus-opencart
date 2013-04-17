@@ -335,7 +335,6 @@ class ControllerCheckoutCheckout extends Controller {
             $zoneId = $this->request->get['zone_id'];
             
         } else if ($this->customer->isLogged()) {
-            // TODO: modificar de acordo com o change
             $countryId = $this->session->data['shipping_address']['country_id'];
             $zoneId = $this->session->data['shipping_address']['zone_id'];
                 
@@ -561,7 +560,6 @@ class ControllerCheckoutCheckout extends Controller {
             $module_name = $result['code'];
             $module_enabled = $this->config->get($module_name . '_status');
             
-            // TODO: testar com outros meios de pagamento
             $akatus_modules = array('akatus', 'akatusb', 'akatust');
 
             if ($module_enabled && in_array($module_name, $akatus_modules)) {
@@ -746,7 +744,7 @@ class ControllerCheckoutCheckout extends Controller {
 
         $this->data['totals'] = $total_data;
         
-        if ($ajax) { // TODO: verificar a necessidade do IF/ELSE
+        if ($ajax) {
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/checkout/confirm.tpl')) {
                 $this->template = $this->config->get('config_template') . '/template/checkout/confirm.tpl';
             } else {
