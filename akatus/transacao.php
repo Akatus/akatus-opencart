@@ -8,7 +8,8 @@ class Transacao
     const CANCELADO             = 'Cancelado';
     const DEVOLVIDO             = 'Devolvido';
     const COMPLETO              = 'Completo';
-    
+    const ESTORNADO             = 'Estornado';
+
     const ID_PROCESSING             = 2;
     const ID_FAILED                 = 10;
     
@@ -18,4 +19,5 @@ class Transacao
     const ID_CANCELADO              = 10203;
     const ID_COMPLETO               = 10204;
     const ID_DEVOLVIDO              = 10205;
+    const ID_ESTORNADO              = 10206;
 }

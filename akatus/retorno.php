@@ -9,8 +9,10 @@ if(! empty($_POST))
 
     $registry = new Registry();
     $loader = new Loader($registry);
+    $config = new Config();
     $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-    $registry->set('load', $loader);    
+    $registry->set('load', $loader);
+    $registry->set('config', $config);
     $registry->set('db', $db);
     $registry->set('model_checkout_order', new ModelCheckoutOrder($registry));
     
@@ -18,7 +20,7 @@ if(! empty($_POST))
     
     $settings = $db->query("SELECT value FROM " . DB_PREFIX . "setting s where s.key='akatus_token_nip'");
     $tokenNip = $settings->row['value'];
-    
+
     if((! isset($_POST['token'])) || ($_POST['token'] != $tokenNip)) die;
 
     $orders = $db->query('SELECT * FROM `' . DB_PREFIX . 'order` WHERE order_id = ' . $_POST["referencia"]);
@@ -99,6 +101,19 @@ function getNovoStatus($statusRecebido, $statusAtual)
             } else {
                 return false;
             }            
+	
+	    case Transacao::ESTORNADO:
+            $listaStatus = array(
+                Transacao::ID_APROVADO,
+                Transacao::ID_COMPLETO
+            );
+
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_ESTORNADO;
+            } else {
+                return false;
+            }
+
             
         default:
             return false;
