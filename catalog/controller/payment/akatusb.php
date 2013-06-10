@@ -102,6 +102,7 @@ class ControllerPaymentAkatusb extends Controller
 		            <endereco>
 		                <tipo>entrega</tipo>
 		                <logradouro>'.$pedido->row['payment_address_1'].'</logradouro>
+		                <bairro>'.utf8_decode($pedido->row['payment_address_2']).'</bairro>
 		                <cidade>'.utf8_decode($pedido->row['payment_city']).'</cidade>
 		                <estado>'.$estado->row['code'].'</estado>
 		                <pais>'.$pais->row['iso_code_3'].'</pais>
@@ -113,7 +114,6 @@ class ControllerPaymentAkatusb extends Controller
 					<telefone>
 						<tipo>residencial</tipo>
 						<numero>'.substr(preg_replace("/[^0-9]/","",$pedido->row['telephone']), 0, 11).'</numero>
-
 					</telefone>
 				</telefones>
 			</pagador>
