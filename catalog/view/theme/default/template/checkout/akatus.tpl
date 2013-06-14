@@ -1,4 +1,4 @@
-<div id="bloco_cc" style="width:100%; display:none; height:350px; margin-top: 130px;">
+<div id="bloco_cc" style="width:270px; display:none; height:350px; margin-top:-20px;">
     <div id="bandeiras_akatus">
         <ul id="cartoes_akatus">
             <li>
@@ -30,14 +30,72 @@
                     <input name='bandeira_cartao' type='radio' value='cartao_amex' />
                 </label>
             </li>
+            <li style="clear:both;"></li>
         </ul>
     </div>
 
     <div id="dados_titular_cartao">
         <div id="form_titular_cartao">
+                <ul class="form-cartao">
+                    <li>
+                        <strong>CPF do Titular </strong>
+                        <input name="cartao_cpf" id="cartao_cpf" type="text" size="40" maxlength="11"/>
+                        <span>*Somente Números</span>
+                    </li>
+                    <li>
+                        <strong>Nome do Titular </strong>
+                        <input name="cartao_titular" id="cartao_titular" type="text" size="40" />
+                        <span>&nbsp;(como gravado no cart&atilde;o)</span>
+                    </li>
+                    <li>
+                        <strong>N&uacute;mero do Cart&atilde;o </strong>
+                        <input name="cartao_numero" id="cartao_numero" type="text" size="40" maxlength="16" />
+                    </li>
+                    <li>
+                        <strong>Validade</strong>
+                        <select name="cartao_mes" id="cartao_mes">
+                            <option value="">mês</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                         / 
+                        <select name="cartao_ano" id="cartao_ano">
+                            <option value="">ano</option>
+                                <?php
+                                    $anos_validade_cartao='';
+                                    for($i=date('Y'); $i<=(date('Y')+10); $i++) {
+                                        @$anos_validade_cartao .='<option value="'.($i-2000).'">'.$i.'</option>';
+                                    }
+                                    
+                                    echo $anos_validade_cartao;
+                                ?>                                    
+                        </select>
+                    </li>
+                    <li>
+                        <strong>C&oacute;digo de Seguran&ccedil;a </strong>
+                        <input name="cartao_codigo" id="cartao_codigo" type="text" size="10" maxlength="4"/>
+                        <span><a href="javascript:mostrar_popup();">O qu&ecirc; &eacute; c&oacute;digo de seguran&ccedil;a? </a> </span>       
+                    </li>
+                    <li>
+                        <strong>Número de Parcelas</strong>
+                        <select name="parcelas" style="width:230px">
+                            <?php echo $parcelamento ?>
+                        </select>
+                    </li>
+                </ul>
 
             <div style='position:relative; float:left; border: none; width:100%;' >
-                <div>
+                <!-- <div>
                     <table width="800" border="0" cellpadding="3" cellspacing="1">
                         <tr>
                             <td><strong>CPF do Titular </strong></td>
@@ -106,7 +164,7 @@
                         </tr>                        
                     </table>
 
-                </div>
+                </div> -->
             </div>
         </div>
 

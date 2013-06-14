@@ -23,7 +23,9 @@
 .akatus-field {
     width: 98%;
 }
-
+#cartoes_akatus{
+	padding-left:0 !important;
+}
 #cartoes_akatus, #lista_de_parcelas {
 	display:block;
 	position:relative;
@@ -33,12 +35,12 @@
 }
 #cartoes_akatus li {
 	display:block;
-	position:relative;
 	float:left;
-	width:150px;
-	height:60px;
+	width:50px;
+	height:50px;
 	text-align:center;
 	cursor:pointer;
+	margin-right:2px;
 }
 #lista_de_parcelas li {
 	display:block;
@@ -65,6 +67,7 @@ form#pagamento {
 	float:left;
 	border: none;
 	background-color:#fff;
+	margin-bottom: 15px;
 }
 #dados_titular_cartao{
 	
@@ -94,3 +97,27 @@ form#pagamento {
 	background-color:white;
 	border:5px solid #666;
   }
+
+  /* cartao de credito */
+
+.form-cartao{
+	width:100%;
+	display:block;
+	list-style:none;
+	padding-left: 0 !important;
+}
+.form-cartao li{	
+	list-style:none;
+	display:block;
+	margin-top: 10px;
+}
+.form-cartao li span, .form-cartao li span a{
+	font-size: 11px !important;
+	display:block;
+}
+.left input[type=text], .left select, .left input[type=password]{
+	margin:0px 0 10px;
+}
+.left h2{
+	margin-bottom:10px;
+}
