@@ -121,3 +121,12 @@ form#pagamento {
 .left h2{
 	margin-bottom:10px;
 }
+
+input[type="text"], input[type="password"], textarea {
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 1px solid #CCCCCC;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 3px;
+    width: 100% !important;
+}
