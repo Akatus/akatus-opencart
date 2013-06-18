@@ -3,31 +3,31 @@
         <ul id="cartoes_akatus">
             <li>
                 <label><img id='cartao_visa'  src='image/akatus/cartao_visa.gif' ><br>
-                    <input name='bandeira_cartao' type='radio' value='cartao_visa' />
+                    <input name='bandeira_cartao' type='radio' value='cartao_visa' style='display: none;'/>
                 </label>
             </li>
 
             <li>
                 <label><img id='cartao_master'  src='image/akatus/cartao_master.gif' ><br>
-                    <input name='bandeira_cartao' type='radio' value='cartao_master' />
+                    <input name='bandeira_cartao' type='radio' value='cartao_master' style='display: none;'/>
                 </label>
             </li>
 
             <li>
                 <label><img id='cartao_elo'  src='image/akatus/cartao_elo.gif' ><br>
-                    <input name='bandeira_cartao' type='radio' value='cartao_elo' />
+                    <input name='bandeira_cartao' type='radio' value='cartao_elo' style='display: none;'/>
                 </label>
             </li>
 
             <li>
                 <label><img id='cartao_diners'  src='image/akatus/cartao_diners.gif' ><br>
-                    <input name='bandeira_cartao' type='radio' value='cartao_diners' />
+                    <input name='bandeira_cartao' type='radio' value='cartao_diners' style='display: none;'/>
                 </label>
             </li>
 
             <li>
                 <label><img id='cartao_amex'  src='image/akatus/cartao_amex.gif' ><br>
-                    <input name='bandeira_cartao' type='radio' value='cartao_amex' />
+                    <input name='bandeira_cartao' type='radio' value='cartao_amex' style='display: none;'/>
                 </label>
             </li>
             <li style="clear:both;"></li>

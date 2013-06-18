@@ -14,7 +14,7 @@
         </tr>
 
         <?php if ($payment_method['code'] == 'akatus') { ?>
-            <tr>
+            <tr class="cartoes">
                 <td></td>
                 <td><?php include 'akatus.tpl' ?></td>
             </tr>

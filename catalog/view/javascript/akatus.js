@@ -151,7 +151,7 @@ function mudarMeioPagamento() {
     switch ($(this).val()) {
 
         case AKATUS_CARTAO_CREDITO:
-            $("#bloco_cc").show();
+            $("#bloco_cc, .cartoes").show();
             $("#bloco_boleto").hide();
             $("#bloco_tef").hide();
             break;
@@ -159,12 +159,12 @@ function mudarMeioPagamento() {
         case AKATUS_BOLETO:
             $("#bloco_boleto").show();
             $("#bloco_tef").hide();
-            $("#bloco_cc").hide();
+            $("#bloco_cc, .cartoes").hide();
             break;
 
         case AKATUS_TEF:
             $("#bloco_tef").show();
-            $("#bloco_cc").hide();
+            $("#bloco_cc, .cartoes").hide();
             $("#bloco_boleto").hide();
             break;
 
@@ -616,7 +616,9 @@ function detectarBandeira() {
         if ($('input[name=bandeira_cartao]').is(':checked')) {
             $('input[name=bandeira_cartao]:checked').prop('checked', false);
             $(imagens).each(function() {
-                $(this).hide();
+                var imagemSrc = $(this).attr('src');
+                var imagemColoridaSrc = imagemSrc.replace(/2/, '');
+                $(this).attr('src', imagemColoridaSrc);
             });
         }
         return false;
@@ -650,7 +652,15 @@ function detectarBandeira() {
 function destacarBandeira(imagens, imagem_destacada) {
     $(imagens).each(function() {
         imagem = $(this);
-        (imagem.attr('id') === imagem_destacada) ? imagem.show() : imagem.hide();
+        imagemSrc = imagem.attr('src');
+        matches = imagemSrc.match(/2/);
+        isImagemCinza = (matches !== null && matches.length > 0);
+
+        if (imagem.attr('id') === imagem_destacada) {
+            imagem.attr('src', imagemSrc.replace(/2/, ''));
+        } else if (! isImagemCinza) {
+            imagem.attr('src', imagemSrc.replace(/\.gif/, '2.gif'));
+        }
     });    
 }
 

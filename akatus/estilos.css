@@ -26,6 +26,11 @@
 #cartoes_akatus{
 	padding-left:0 !important;
 }
+
+#cartoes_akatus label {
+    cursor: default;
+}
+
 #cartoes_akatus, #lista_de_parcelas {
 	display:block;
 	position:relative;
@@ -61,13 +66,13 @@ form#pagamento {
 }
 #bandeiras_akatus {
 	width:100%;
-	height:90px;
+	height:80px;
 	display:block;
 	position:relative;
 	float:left;
 	border: none;
 	background-color:#fff;
-	margin-bottom: 15px;
+	margin-bottom: 0;
 }
 #dados_titular_cartao{
 	
@@ -99,6 +104,10 @@ form#pagamento {
   }
 
   /* cartao de credito */
+
+.cartoes {
+    display: none;
+}
 
 .form-cartao{
 	width:100%;
