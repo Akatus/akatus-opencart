@@ -1,3 +1,7 @@
+.tef {
+    display: none;
+}
+
 #left-column {
     width: 30%;
     float: left;

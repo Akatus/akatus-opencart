@@ -153,17 +153,17 @@ function mudarMeioPagamento() {
         case AKATUS_CARTAO_CREDITO:
             $("#bloco_cc, .cartoes").show();
             $("#bloco_boleto").hide();
-            $("#bloco_tef").hide();
+            $("#bloco_tef, .tef").hide();
             break;
 
         case AKATUS_BOLETO:
             $("#bloco_boleto").show();
-            $("#bloco_tef").hide();
+            $("#bloco_tef, .tef").hide();
             $("#bloco_cc, .cartoes").hide();
             break;
 
         case AKATUS_TEF:
-            $("#bloco_tef").show();
+            $("#bloco_tef, .tef").show();
             $("#bloco_cc, .cartoes").hide();
             $("#bloco_boleto").hide();
             break;
@@ -424,7 +424,7 @@ function metodoEntregaValido(shipping_required) {
 }
 
 function validacaoTEF() {
-    var tef_selected = ('input[name=tef]').is(':checked');
+    var tef_selected = $('input[name=tef]').is(':checked');
     
     if (tef_selected) {
         return true;

@@ -21,7 +21,7 @@
         <?php } ?>
 
         <?php if ($payment_method['code'] == 'akatust') { ?>
-            <tr>
+            <tr class="tef">
                 <td></td>
                 <td><?php include 'akatust.tpl' ?></td>
             </tr>    
