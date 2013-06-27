@@ -1,68 +1,33 @@
 ﻿<?php
-/*
-+---------------------------------------------------+
-| 			 MÓDULO DE PAGAMENTO AKATUS 			|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- **/
-
-class Transacao
-{
-    const AGUARDANDO_PAGAMENTO  = 'Aguardando Pagamento';
-    const EM_ANALISE            = 'Em Análise';
-    const APROVADO              = 'Aprovado';
-    const CANCELADO             = 'Cancelado';
-    const DEVOLVIDO             = 'Devolvido';
-    const COMPLETO              = 'Completo';
-    
-    const ID_PROCESSING             = 2;
-    
-    const ID_AGUARDANDO_PAGAMENTO   = 10200;
-    const ID_EM_ANALISE             = 10201;
-    const ID_APROVADO               = 10202;
-    const ID_CANCELADO              = 10203;
-    const ID_COMPLETO               = 10204;
-    const ID_DEVOLVIDO              = 10205;
-}
 
 if(! empty($_POST))
 {	
     require_once('../config.php');   
     require_once(DIR_SYSTEM . 'startup.php');
+    require_once('transacao.php');
+    require_once('../catalog/model/checkout/order.php');
 
-    global $db;
-
+    $registry = new Registry();
+    $loader = new Loader($registry);
+    $config = new Config();
     $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+    $registry->set('load', $loader);
+    $registry->set('config', $config);
+    $registry->set('db', $db);
+    $registry->set('model_checkout_order', new ModelCheckoutOrder($registry));
+    
+    $orderModel = $registry->get('model_checkout_order');
+    
     $settings = $db->query("SELECT value FROM " . DB_PREFIX . "setting s where s.key='akatus_token_nip'");
     $tokenNip = $settings->row['value'];
-    
-    if($tokenNip != $_POST['token']) die;
+
+    if((! isset($_POST['token'])) || ($_POST['token'] != $tokenNip)) die;
 
     $orders = $db->query('SELECT * FROM `' . DB_PREFIX . 'order` WHERE order_id = ' . $_POST["referencia"]);
     $order = $orders->row;
 
     $novoStatus = getNovoStatus($_POST['status'], $order['order_status_id']);
-
-    if ($novoStatus) {
-        $db->query('UPDATE `' . DB_PREFIX . 'order` SET `order_status_id` = ' . $novoStatus . ' WHERE `order_id` = ' . $order['order_id']);
-        $db->query("INSERT INTO `" . DB_PREFIX . "order_history` VALUES (NULL , '" . $order['order_id'] . "', '" . $novoStatus . "', '0', '', NOW());");	    
-    }
+    $orderModel->update($order['order_id'], $novoStatus, $notify = true);
 }
 
 
@@ -136,6 +101,19 @@ function getNovoStatus($statusRecebido, $statusAtual)
             } else {
                 return false;
             }            
+	
+	    case Transacao::ESTORNADO:
+            $listaStatus = array(
+                Transacao::ID_APROVADO,
+                Transacao::ID_COMPLETO
+            );
+
+            if (in_array($statusAtual, $listaStatus)) {
+                return Transacao::ID_ESTORNADO;
+            } else {
+                return false;
+            }
+
             
         default:
             return false;

@@ -1,3 +1,40 @@
+.tef {
+    display: none;
+}
+
+#left-column {
+    width: 30%;
+    float: left;
+}
+
+#center-column {
+    width: 30%;
+    margin-left: 5%;
+    float: left;
+}
+
+#right-column {
+    width: 30%;
+    margin-left: 5%;
+    float: left;    
+}
+
+.half {
+    width: 50%;
+    float: left;
+}
+
+.akatus-field {
+    width: 98%;
+}
+#cartoes_akatus{
+	padding-left:0 !important;
+}
+
+#cartoes_akatus label {
+    cursor: default;
+}
+
 #cartoes_akatus, #lista_de_parcelas {
 	display:block;
 	position:relative;
@@ -7,12 +44,12 @@
 }
 #cartoes_akatus li {
 	display:block;
-	position:relative;
 	float:left;
-	width:150px;
-	height:60px;
+	width:50px;
+	height:50px;
 	text-align:center;
 	cursor:pointer;
+	margin-right:2px;
 }
 #lista_de_parcelas li {
 	display:block;
@@ -33,18 +70,19 @@ form#pagamento {
 }
 #bandeiras_akatus {
 	width:100%;
-	height:130px;
+	height:80px;
 	display:block;
 	position:relative;
 	float:left;
 	border: none;
 	background-color:#fff;
+	margin-bottom: 0;
 }
 #dados_titular_cartao{
 	
 }
 #parcelas_akatus{
-	width:100%; height:120px; display:block; position:relative; float:left; border-bottom: 1px solid #ccc; background-color:#fff; margin-top:20px; margin-bottom:10px;
+	width:100%; height:120px; display:block; position:relative; float:left; background-color:#fff; margin-top:20px; margin-bottom:10px;
 }
 #carregando
 {
@@ -52,7 +90,7 @@ form#pagamento {
 }
 
 #popup{
-	
+	z-index: 100;
 	font-family:Arial, Helvetica, sans-serif;
 	font-size:12px;
 }
@@ -68,3 +106,40 @@ form#pagamento {
 	background-color:white;
 	border:5px solid #666;
   }
+
+  /* cartao de credito */
+
+.cartoes {
+    display: none;
+}
+
+.form-cartao{
+	width:100%;
+	display:block;
+	list-style:none;
+	padding-left: 0 !important;
+}
+.form-cartao li{	
+	list-style:none;
+	display:block;
+	margin-top: 10px;
+}
+.form-cartao li span, .form-cartao li span a{
+	font-size: 11px !important;
+	display:block;
+}
+.left input[type=text], .left select, .left input[type=password]{
+	margin:0px 0 10px;
+}
+.left h2{
+	margin-bottom:10px;
+}
+
+input[type="text"], input[type="password"], textarea {
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 1px solid #CCCCCC;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 3px;
+    width: 100% !important;
+}
