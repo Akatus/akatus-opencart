@@ -87,8 +87,10 @@ function atualizaParcelamento() {
         complete: function() {
         },
         success: function(parcelas) {
+            numero_parcelas_selecionado = $('select[name=parcelas]').val();
             $('select[name=parcelas]').empty();
             $('select[name=parcelas]').append(parcelas);
+            $('select[name=parcelas]').val(numero_parcelas_selecionado);
         }
     });
 }
