@@ -5,6 +5,8 @@ require_once 'akatus_base.php';
 class ControllerPaymentAkatus extends AkatusPaymentBaseController {
 
     public function index() {
+        global $log;
+
         $order_id = $this->saveOrder();
         $order = $this->getOrder($order_id);
         
@@ -27,7 +29,13 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
         $akatus = $this->xml2array($response);
 
         if ($akatus['resposta']['status'] == 'erro') {
-            $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=4&msg=" . urlencode($akatus['resposta']['descricao']) . "';</script>";            
+            $log->write('Erro ao tentar realizar transação. Dados enviados:');
+            $log->write($xml);
+
+            $log->write('Dados recebidos da Akatus:');
+            $log->write(print_r($akatus, true));
+
+            $ouput = "<script>window.location = 'index.php?route=information/akatus&tipo=4';</script>";            
             $this->model_checkout_order->confirm($order_id, Transacao::ID_FAILED, $comment = '', $notify = false);
 
         } else if ($akatus['resposta']['status'] == 'Em Análise') {

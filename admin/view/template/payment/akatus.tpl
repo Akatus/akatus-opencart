@@ -113,20 +113,8 @@
           
         </select>        </tr>
 	  
-	    <!--<tr>
-        <td width="18%"><span class="required">*</span> DV Conta Cedente (digito):</td>
-        <td width="82%"><input type="text" name="akatus_ccdv" value="<?php echo $akatus_ccdv; ?>" />
-          <br />
-		  </tr>-->
-	  
-	  
-	  
     </table>
     </form>
   </div>
 </div>
-<center>
-  Desenvolvido por <a href="http://www.andresa.com.br" target="_blank">Andresa Web Studio</a>
-</center>
-</body>
-</body>
+</body>
