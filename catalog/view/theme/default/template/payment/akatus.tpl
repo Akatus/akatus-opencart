@@ -103,16 +103,11 @@ $parcelamento='<UL id="lista_de_parcelas">';
 		
 		
 		
-		<form action="akatus.php" method="post" enctype="application/x-www-form-urlencoded" name="pagamento" id="pagamento" >
+		<form action="index.php?route=payment/akatus/confirm" method="post" enctype="application/x-www-form-urlencoded" name="pagamento" id="pagamento" >
 		
-		<input name="route" type="hidden" value="payment/akatus/confirm" />
-		
-
 		<div style="width:100%; display:block; height:750px;">
-        
 		
 		<div id="bandeiras_akatus">
-        
 		
 		<div class="checkout-heading">1) Selecione abaixo a bandeira do seu cartão:</div>
 		

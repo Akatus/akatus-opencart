@@ -38,12 +38,6 @@ class ControllerInformationAkatus extends Controller
            'separator' => false
          );
 
-         $this->data['breadcrumbs'][] = array(
-           'text'      => 'head title',
-         'href'      => $this->url->link('information/akatus'),
-           'separator' => '/'
-         );   
-		
 		$tipo=$_REQUEST['tipo'];
 	
 	   if($tipo==1)

@@ -24,6 +24,8 @@
  * @version 1.0 Beta
  **/
 
+require_once(DIR_SYSTEM . '../akatus/transacao.php');
+
 class ControllerPaymentakatust extends Controller 
 {
   protected function index() 
@@ -56,40 +58,34 @@ class ControllerPaymentakatust extends Controller
   }
 
   public function confirm() {
+        global $log;
 
 		$this->load->model('checkout/order');
 		
-		#Envia os dados para a Akatus na tentativa de receber
+        $order_id = $this->session->data['order_id'];
 		
-		// Registry
-		$registry = new Registry();
-		
-		// Loader
-		$loader = new Loader($registry);
-		$registry->set('load', $loader);
-		
-		// Config
-		$config = new Config();
-		$registry->set('config', $config);
+		$pedido = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '".$this->session->data['order_id']."' LIMIT 1");
+		$estado = $this->db->query("SELECT code FROM `" . DB_PREFIX . "zone` WHERE zone_id = ".$pedido->row['payment_zone_id']);
+		$pais = $this->db->query("SELECT iso_code_3 FROM `" . DB_PREFIX . "country` WHERE country_id = ".$pedido->row['payment_country_id']);
 
-		
-		$db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-		$registry->set('db', $db);
+        $produtos_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = " . $order_id);
+		$frete_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'shipping' AND order_id = '".$order_id."'");
+		$cupom_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'coupon' AND order_id = '".$order_id."'");
+        $total_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'total' AND order_id = '".$order_id."'");
 
-		$pedido = $db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '".$this->session->data['order_id']."' LIMIT 1");
-		$estado = $db->query("SELECT code FROM `" . DB_PREFIX . "zone` WHERE zone_id = ".$pedido->row['payment_zone_id']);
-		$pais = $db->query("SELECT iso_code_3 FROM `" . DB_PREFIX . "country` WHERE country_id = ".$pedido->row['payment_country_id']);
+        $total = number_format($total_result->row['value'], 2, '.', '');
+        $frete = number_format($frete_result->row['value'], 2, '.', '');
 
+        $temCupomDesconto = (count($cupom_result->rows)) ? true : false;
 
-		$valor_total_compra=number_format($pedido->row['total'], 2, '.', '') ;
-		
-		$desconto=$this->config->get('akatust_desconto');
-		if($desconto)
-		{
-			$desconto=number_format(($valor_total_compra*($desconto/100)), 2, '.', '');
-		}
-		
-		
+        $cupom = 0;
+        $desconto = 0;
+
+        if ($temCupomDesconto) {
+            $valor_absoluto_cupom = abs($cupom_result->rows[0]['value']);
+            $cupom = number_format($valor_absoluto_cupom, 2, '.', '');
+            $desconto = $cupom;
+        }
 		
 		  $xml=utf8_encode('<?xml version="1.0" encoding="utf-8"?><carrinho>
 			<recebedor>
@@ -97,16 +93,16 @@ class ControllerPaymentakatust extends Controller
 				<email>'.$this->config->get('akatus_email_conta').'</email>
 			</recebedor>
 			<pagador>
-				<nome>'.$pedido->row['firstname'].' '.$pedido->row['lastname'].'</nome>
+				<nome>'.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).'</nome>
 				<email>'.$pedido->row['email'].'</email>
 				<enderecos>
 		            <endereco>
 		                <tipo>entrega</tipo>
-		                <logradouro>'.$pedido->row['payment_address_1'].'</logradouro>
+		                <logradouro>'.utf8_decode($pedido->row['payment_address_1']).'</logradouro>
 		                <bairro>'.utf8_decode($pedido->row['payment_address_2']).'</bairro>
 		                <cidade>'.utf8_decode($pedido->row['payment_city']).'</cidade>
-		                <estado>'.$estado->row['code'].'</estado>
-		                <pais>'.$pais->row['iso_code_3'].'</pais>
+		                <estado>'.utf8_decode($estado->row['code']).'</estado>
+		                <pais>'.utf8_decode($pais->row['iso_code_3']).'</pais>
 		                <cep>'.$pedido->row['payment_postcode'].'</cep>
 		            </endereco>
 		        </enderecos>
@@ -118,80 +114,73 @@ class ControllerPaymentakatust extends Controller
 					</telefone>
 				</telefones>
 			</pagador>
-			<produtos>
-			   
-				<produto>
-					<codigo>1</codigo>
-					<descricao>Pedido '.$pedido->row['order_id'].' em http://'.$_SERVER['HTTP_HOST'].'/</descricao>
-					<quantidade>1</quantidade>
-					<preco>'.$valor_total_compra.'</preco>
-					<peso>0.0</peso>
-					<frete>0.00</frete>
-					<desconto>'.$desconto.'</desconto>
-				</produto>
-			</produtos>
+			<produtos>');
+
+             foreach($produtos_result->rows as $produto) {
+                $valor_produto = number_format($produto['price'], 2, '.', '');
+
+                $xml .= '<produto>
+                    <codigo>'. $produto['product_id'] .'</codigo>
+                    <descricao>'. utf8_decode($produto['name']) .'</descricao>
+                    <quantidade>'. $produto['quantity'] .'</quantidade>
+                    <preco>'. $valor_produto .'</preco>
+                    <peso>0.00</peso>
+                    <frete>0.00</frete>
+                    <desconto>0.00</desconto>
+                </produto>';
+            }
+       
+			$xml .= '</produtos>
 			
 			<transacao>
 			
-			<desconto_total>'.(    number_format(($this->config->get('akatust_desconto')/100) * $valor_total_compra, 2)  ).'</desconto_total>
+			<desconto>'. $desconto .'</desconto>
 			<peso_total>0.00</peso_total>
-			<frete_total>0.00</frete_total>
+			<frete>'. $frete .'</frete>
 			<moeda>BRL</moeda>
-			<referencia>'.($pedido->row['order_id'] +50000).'</referencia>
+			<referencia>'.$pedido->row['order_id'].'</referencia>
 			<meio_de_pagamento>'.$_GET['tef'].'</meio_de_pagamento>
 			
 			</transacao>
 		
-		</carrinho>');
-		
+		</carrinho>';
 		
 			$URL = "https://www.akatus.com/api/v1/carrinho.xml";
 
-
 			$ch = curl_init($URL);
-
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
 			curl_setopt($ch, CURLOPT_POST, 1);
-
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
-
 			curl_setopt($ch, CURLOPT_POSTFIELDS, "$xml");
-
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 			$akatus = curl_exec($ch);
 
 			curl_close($ch);
 
-
 			$akatus=$this->xml2array($akatus);
-		
-		
 
-		$comment  = "Caso não tenha concluído o pagamento através do seu cartão de débito, utilize o link abaixo: \n<br>";
-		$comment .= '<a href="'.$akatus['resposta']['url_retorno'].'" target="_blank">'.$akatus['resposta']['url_retorno'].'</a>';
-		
-		$this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('akatust_padrao'), $comment);
-		
-		if (!empty($this->session->data['order_id'])) 
-		{ 
-			$this->cart->clear();
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
-			unset($this->session->data['comment']);
-			unset($this->session->data['order_id']);	
-			unset($this->session->data['coupon']);
-		}
-		
-	
+        if ($akatus['resposta']['status'] == 'erro') {
+            $log->write('Erro ao tentar realizar transação. Dados enviados:');
+            $log->write($xml);
 
-		echo('<script>window.location="'.$akatus['resposta']['url_retorno'].'"; </script>');
-		exit;
+            $log->write('Dados recebidos da Akatus:');
+            $log->write(print_r($akatus, true));
+
+            $this->model_checkout_order->confirm($order_id, Transacao::ID_FAILED, $comment = '', $notify = false);
+            
+            $output = "<script>window.location = 'index.php?route=information/akatus&tipo=4';</script>";
+            $this->response->setOutput($output);
+            
+        } else {
+            $comment = "Caso não tenha concluído o pagamento através do seu cartão de débito, utilize o link abaixo: \n<br>";
+            $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
+
+            $this->model_checkout_order->confirm($order_id, $this->config->get('akatust_padrao'), $comment, $notify = true);
+
+            $this->redirect($akatus['resposta']['url_retorno']);
+        }	
 	}
 	
 	public function xml2array($contents, $get_attributes=1, $priority = 'tag') 

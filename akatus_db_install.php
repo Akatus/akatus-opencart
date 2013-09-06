@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*
 +---------------------------------------------------+
 | 			 MÓDULO DE PAGAMENTO AKATUS 			|
@@ -42,7 +42,7 @@ foreach ($query->rows as $reg) {
     (10203, " . $reg['language_id'] . ", 'Cancelado'),
     (10204, " . $reg['language_id'] . ", 'Completo'),
     (10205, " . $reg['language_id'] . ", 'Devolvido'),
-    (10206, " . $reg['language_id'] . ", 'Desconhecido');");
+    (10206, " . $reg['language_id'] . ", 'Estornado');");
 }
 
 
