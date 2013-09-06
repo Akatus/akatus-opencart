@@ -1,7 +1,32 @@
 <?php
+/*
++---------------------------------------------------+
+| 			 MÓDULO DE PAGAMENTO AKATUS 			|
+|---------------------------------------------------|
+|													|
+|  Este módulo permite receber pagamentos através   |
+|  do gateway de pagamentos Akatus em lojas			|
+|  utilizando a plataforma Prestashop				|
+|													|
+|---------------------------------------------------|
+|													|
+|  Desenvolvido por: www.andresa.com.br				|
+|					 contato@andresa.com.br			|
+|													|
++---------------------------------------------------+
+*/
+
+/**
+ * @author Andresa Martins da Silva
+ * @copyright Andresa Web Studio
+ * @site http://www.andresa.com.br
+ * @version 1.0 Beta
+ **/
 
 class ControllerInformationAkatus extends Controller 
 {
+   private $error = array();
+      
      public function index() {
       $this->language->load('information/akatus'); 
 		
@@ -48,9 +73,9 @@ class ControllerInformationAkatus extends Controller
 		{
 			#erro
 			
-		   $this->document->setTitle('Conclusão do Pedido'); 
-		   $this->data['heading_title'] = "Desculpe, não foi possível concluir o seu pedido."; 
-		   $this->data['conteudo_centro'] = 'Tente novamente. Se o problema persistir, entre em contato com o administrador da loja.';
+		   $this->document->setTitle('Erro no pagamento'); 
+		   $this->data['heading_title'] = "O seguinte erro ocorreu:"; 
+		   $this->data['conteudo_centro'] = urldecode($_REQUEST['msg']).'<BR>';
 
 		}
 		else if($tipo==5)
