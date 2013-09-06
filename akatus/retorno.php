@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if(! empty($_POST))
 {	
@@ -27,7 +27,10 @@ if(! empty($_POST))
     $order = $orders->row;
 
     $novoStatus = getNovoStatus($_POST['status'], $order['order_status_id']);
-    $orderModel->update($order['order_id'], $novoStatus, $notify = true);
+
+    if ($novoStatus) {
+        $orderModel->update($order['order_id'], $novoStatus, $notify = true);
+    }
 }
 
 

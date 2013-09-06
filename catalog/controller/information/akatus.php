@@ -47,11 +47,10 @@ class ControllerInformationAkatus extends Controller
         else if($tipo==4)
 		{
 			#erro
-			
-		   $this->document->setTitle('Erro ao finalizar o pedido'); 
-		   $this->data['heading_title'] = "O seguinte erro ocorreu:"; 
-		   $this->data['conteudo_centro'] = urldecode($_REQUEST['msg']).'<BR>';
 
+            $this->document->setTitle('Conclusão do Pedido'); 
+            $this->data['heading_title'] = "Desculpe, não foi possível concluir o seu pedido."; 
+            $this->data['conteudo_centro'] = 'Tente novamente. Se o problema persistir, entre em contato com o administrador da loja.';            
 		}
 		else if($tipo==5)
 		{
