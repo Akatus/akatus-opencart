@@ -102,7 +102,16 @@ class ControllerPaymentakatust extends Controller
 		} else {
 		$this->data['akatust_status'] = $this->config->get('akatust_status'); 
 		} 
-		
+
+		if (isset($this->request->post['akatus_tipo_conta'])) 
+		{
+			$this->data['akatus_tipo_conta'] = $this->request->post['akatus_tipo_conta'];
+		} 
+		else 
+		{
+			$this->data['akatus_tipo_conta'] = $this->config->get('akatus_tipo_conta'); 
+		} 
+	
 		if (isset($this->request->post['akatust_nome'])) {
 		$this->data['akatust_nome'] = $this->request->post['akatust_nome'];
 		} else {

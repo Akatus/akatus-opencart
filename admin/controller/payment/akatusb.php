@@ -118,6 +118,15 @@ class ControllerPaymentAkatusb extends Controller
 			$this->data['akatusb_status'] = $this->config->get('akatusb_status'); 
 		} 
 
+		if (isset($this->request->post['akatus_tipo_conta'])) 
+		{
+			$this->data['akatus_tipo_conta'] = $this->request->post['akatus_tipo_conta'];
+		} 
+		else 
+		{
+			$this->data['akatus_tipo_conta'] = $this->config->get('akatus_tipo_conta'); 
+		} 
+
 		if (isset($this->request->post['akatusb_nome'])) 
 		{
 			$this->data['akatusb_nome'] = $this->request->post['akatusb_nome'];
@@ -169,7 +178,7 @@ class ControllerPaymentAkatusb extends Controller
 			$this->data['akatusb_geo_zone_id'] = $this->config->get('akatusb_geo_zone_id'); 
 		} 
 
-		if (isset($this->request->post['akatusb_email_conta'])) 
+		if (isset($this->request->post['akatus_email_conta'])) 
 		{
 			$this->data['akatus_email_conta'] = $this->request->post['akatus_email_conta'];
 		} 
@@ -178,7 +187,7 @@ class ControllerPaymentAkatusb extends Controller
 			$this->data['akatus_email_conta'] = $this->config->get('akatus_email_conta'); 
 		} 
 
-		if (isset($this->request->post['akatusb_token_nip'])) 
+		if (isset($this->request->post['akatus_token_nip'])) 
 		{
 			$this->data['akatus_token_nip'] = $this->request->post['akatus_token_nip'];
 		} 

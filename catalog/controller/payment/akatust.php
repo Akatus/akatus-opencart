@@ -121,7 +121,7 @@ class ControllerPaymentakatust extends Controller
 
                 $xml .= '<produto>
                     <codigo>'. $produto['product_id'] .'</codigo>
-                    <descricao>'. utf8_decode($produto['name']) .'</descricao>
+                    <descricao>'. $produto['name'] .'</descricao>
                     <quantidade>'. $produto['quantity'] .'</quantidade>
                     <preco>'. $valor_produto .'</preco>
                     <peso>0.00</peso>
@@ -144,8 +144,8 @@ class ControllerPaymentakatust extends Controller
 			</transacao>
 		
 		</carrinho>';
-		
-			$URL = "https://www.akatus.com/api/v1/carrinho.xml";
+
+            $URL = $this->get_url();
 
 			$ch = curl_init($URL);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -162,6 +162,7 @@ class ControllerPaymentakatust extends Controller
 			$akatus=$this->xml2array($akatus);
 
         if ($akatus['resposta']['status'] == 'erro') {
+            $log->write('URL da requisição: ' . $URL);
             $log->write('Erro ao tentar realizar transação. Dados enviados:');
             $log->write($xml);
 
@@ -182,7 +183,18 @@ class ControllerPaymentakatust extends Controller
             $this->redirect($akatus['resposta']['url_retorno']);
         }	
 	}
-	
+  
+    private function get_url()
+    {
+        $tipo_conta = $this->config->get('akatus_tipo_conta');
+
+        if ($tipo_conta === 'PRODUCAO') {
+            return "https://www.akatus.com/api/v1/carrinho.xml";
+        }
+
+        return "https://dev.akatus.com/api/v1/carrinho.xml";
+	}
+
 	public function xml2array($contents, $get_attributes=1, $priority = 'tag') 
 	{ 
 		if(!$contents) return array(); 

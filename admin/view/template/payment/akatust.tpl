@@ -71,6 +71,19 @@
 	  <tr>
 	    <td colspan='2'><h2>Dados da Conta Akatus</h2></td>
 	    </tr>
+
+	  <tr>
+	    <td><span class="required">*</span> Tipo:</td>
+	    <td><select name="akatus_tipo_conta">
+	      <?php if ($akatus_tipo_conta === 'PRODUCAO') { ?>
+	      <option value="PRODUCAO" selected="selected">Produção</option>
+	      <option value="SANDBOX">Sandbox</option>
+	      <?php } else { ?>
+	      <option value="PRODUCAO">Produção</option>
+	      <option value="SANDBOX" selected="selected">Sandbox</option> <?php } ?>
+	      </select></td>
+	    </tr>
+
 	  <tr>
 	    <td><span class="required">*</span> E-mail da conta:</td>
 	    <td><input name="akatus_email_conta" type="text" id="akatus_email_conta" value="<?php echo $akatus_email_conta; ?>" size='80' />
