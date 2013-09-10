@@ -56,14 +56,6 @@
         <td><input type="text" name="akatusb_sort_order" value="<?php echo $akatusb_sort_order; ?>" size="1" /></td>
       </tr>
 	  
-	<!--  <tr>
-        <td width="18%"><span class="required">*</span> Desconto em %:</td>
-        <td width="82%">
-		<input type="text" name="akatusb_desconto" value="<?php echo $akatusb_desconto; ?>" size='2' />
-          <br />
-
-      </tr> -->
-	  
 	  <tr>
 	    <td>Status:</td>
 	    <td><select name="akatusb_status">
@@ -78,6 +70,17 @@
 	  
 	  <tr>
 	    <td colspan='2'><h2>Dados da Conta Akatus</h2></td>
+	    </tr>
+	  <tr>
+	    <td><span class="required">*</span> Tipo:</td>
+	    <td><select name="akatus_tipo_conta">
+	      <?php if ($akatus_tipo_conta === 'PRODUCAO') { ?>
+	      <option value="PRODUCAO" selected="selected">Produção</option>
+	      <option value="SANDBOX">Sandbox</option>
+	      <?php } else { ?>
+	      <option value="PRODUCAO">Produção</option>
+	      <option value="SANDBOX" selected="selected">Sandbox</option> <?php } ?>
+	      </select></td>
 	    </tr>
 	  <tr>
 	    <td><span class="required">*</span> E-mail da conta:</td>

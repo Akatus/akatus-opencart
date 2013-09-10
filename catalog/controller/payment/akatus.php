@@ -27,6 +27,7 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
         $akatus = $this->xml2array($response);
 
         if ($akatus['resposta']['status'] == 'erro') {
+            $log->write('URL da requisição: ' . $url);
             $log->write('Erro ao tentar realizar transação. Dados enviados:');
             $log->write($xml);
 

@@ -13,12 +13,6 @@ class ControllerInformationAkatus extends Controller
            'separator' => false
          );
 
-         $this->data['breadcrumbs'][] = array(
-           'text'      => 'head title',
-         'href'      => $this->url->link('information/akatus'),
-           'separator' => '/'
-         );   
-		
 		$tipo=$_REQUEST['tipo'];
 	
 	   if($tipo==1)
@@ -47,10 +41,10 @@ class ControllerInformationAkatus extends Controller
         else if($tipo==4)
 		{
 			#erro
-
             $this->document->setTitle('Conclusão do Pedido'); 
             $this->data['heading_title'] = "Desculpe, não foi possível concluir o seu pedido."; 
             $this->data['conteudo_centro'] = 'Tente novamente. Se o problema persistir, entre em contato com o administrador da loja.';            
+
 		}
 		else if($tipo==5)
 		{

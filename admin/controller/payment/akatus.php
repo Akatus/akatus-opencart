@@ -117,6 +117,15 @@ class ControllerPaymentAkatus extends Controller
 			$this->data['akatus_status'] = $this->config->get('akatus_status'); 
 		} 
 
+		if (isset($this->request->post['akatus_tipo_conta'])) 
+		{
+			$this->data['akatus_tipo_conta'] = $this->request->post['akatus_tipo_conta'];
+		} 
+		else 
+		{
+			$this->data['akatus_tipo_conta'] = $this->config->get('akatus_tipo_conta'); 
+		} 
+
 		if (isset($this->request->post['akatus_nome'])) 
 		{
 			$this->data['akatus_nome'] = $this->request->post['akatus_nome'];

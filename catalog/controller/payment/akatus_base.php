@@ -361,9 +361,15 @@ class AkatusPaymentBaseController extends Controller {
         
         return utf8_encode($xml);
     }
-    
+
     protected function getUrl() {
-        return 'https://www.akatus.com/api/v1/carrinho.xml';
+        $tipo_conta = $this->config->get('akatus_tipo_conta');
+
+        if ($tipo_conta === 'PRODUCAO') {
+            return "https://www.akatus.com/api/v1/carrinho.xml";
+        }
+
+        return "https://dev.akatus.com/api/v1/carrinho.xml";
     }
     
     protected function clearSession() {
