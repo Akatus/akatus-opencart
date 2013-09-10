@@ -337,8 +337,8 @@ class AkatusPaymentBaseController extends Controller {
             <referencia>' . ($order['order_id']) . '</referencia>
             <meio_de_pagamento>' . $meioDePagamento . '</meio_de_pagamento>
 
-            <desconto_total>' . ( number_format(($desconto / 100) * $valor_total_compra, 2, '.', '') ) . '</desconto_total>
-            <peso_total>0.00</peso_total>
+            <desconto>' . ( number_format(($desconto / 100) * $valor_total_compra, 2, '.', '') ) . '</desconto>
+            <peso>0.00</peso>
             <frete>' . $order['shipping_value'] . '</frete>
             <moeda>BRL</moeda>';
             
