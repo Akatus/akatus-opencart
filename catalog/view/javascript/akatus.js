@@ -147,6 +147,10 @@ function calculaFrete() {
         }
     }
 
+    postcode = postcode.replace(/[^0-9]/, '');
+    countryId= countryId.replace(/[^0-9]/, '');
+    zoneId = zoneId.replace(/[^0-9]/, '');
+
     if (postcode != '' || (countryId != '') && (zoneId != '')) {
         var url = 'index.php?route=checkout/checkout/findShippingMethods&country_id=' + countryId + '&zone_id=' + zoneId + '&postcode=' + postcode;
 
