@@ -118,18 +118,37 @@ function atualizaValores() {
 }
 
 function calculaFrete() {
-    var countryId, zoneId;
+    var countryId, zoneId, postcode;
 
-    if ($('input[name=shipping_address]').is(':checked')) {
-        countryId = $('select[name=country_id]').val();
-        zoneId = $('select[name=zone_id]').val();
+    if (logged) {
+        var existing_address = $('input[name=shipping_address]:checked').val() === 'existing';
+
+        if (existing_address) {
+            postcode = $('select[name=shipping_address_id] option:selected').attr('data-postcode');
+        
+        } else {
+            countryId = $('select[name=shipping_country_id]').val();
+            zoneId = $('select[name=shipping_zone_id]').val();
+            postcode = $('input[name=shipping_postcode]').val();
+        }
+
     } else {
-        countryId = $('select[name=shipping_country_id]').val();
-        zoneId = $('select[name=shipping_zone_id]').val();
+        var different_address = $('input[name=shipping_address]:checked').val() === 'new';
+
+        if (different_address) {
+            countryId = $('select[name=shipping_country_id]').val();
+            zoneId = $('select[name=shipping_zone_id]').val();
+            postcode = $('input[name=shipping_postcode]').val();
+
+        } else {
+            countryId = $('select[name=country_id]').val();
+            zoneId = $('select[name=zone_id]').val();
+            postcode = $('input[name=postcode]').val();
+        }
     }
 
-    if ((countryId != '') && (zoneId != '')) {
-        var url = 'index.php?route=checkout/checkout/findShippingMethods&country_id=' + countryId + '&zone_id=' + zoneId;
+    if (postcode != '' || (countryId != '') && (zoneId != '')) {
+        var url = 'index.php?route=checkout/checkout/findShippingMethods&country_id=' + countryId + '&zone_id=' + zoneId + '&postcode=' + postcode;
 
         $.getJSON(url, function(shippingMethods) {
 
@@ -137,13 +156,16 @@ function calculaFrete() {
             $('#shipping-method table').empty();
 
             $.each(shippingMethods, function(shippingMethodName, shippingMethod) {
-                var html = "<tr>";
-                html += "<td><input type='radio' id='" + shippingMethod.quote[shippingMethodName].code + "' value='" + shippingMethod.quote[shippingMethodName].code + "' name='shipping_method'></td>";
-                html += "<td><label for='" + shippingMethod.quote[shippingMethodName].code + "'>" + shippingMethod.quote[shippingMethodName].title + "</label></td>";
-                html += "<td style='text-align: right;'><label for='" + shippingMethod.quote[shippingMethodName].code + "'>" + shippingMethod.quote[shippingMethodName].text + "</label></td>";
-                html += "</tr>";
 
-                $('#shipping-method table').append(html);
+                for(method in shippingMethod.quote) {
+                    var html = "<tr>";
+                    html += "<td><input type='radio' id='" + shippingMethod.quote[method].code + "' value='" + shippingMethod.quote[method].code + "' name='shipping_method'></td>";
+                    html += "<td><label for='" + shippingMethod.quote[method].code + "'>" + shippingMethod.quote[method].title + "</label></td>";
+                    html += "<td style='text-align: right;'><label for='" + shippingMethod.quote[method].code + "'>" + shippingMethod.quote[method].text + "</label></td>";
+                    html += "</tr>";
+
+                    $('#shipping-method table').append(html);
+                }
             });
         });
     }
@@ -182,11 +204,17 @@ $(function() {
     
     $('input[name=shipping_method]').live('change', atualizaValores);
     
+    $('input[name=postcode]').change(calculaFrete);
+    $('input[name=shipping_postcode]').change(calculaFrete);
     $('select[name=zone_id]').change(calculaFrete);
     $('input[name=payment_method]').change(mudarMeioPagamento);
     $('select[name=shipping_zone_id]').change(calculaFrete);
     $('input[name=cartao_numero]').keyup(detectarBandeira);
-    
+
+    $('#shipping-address-existing, #shipping-address-new').click(calculaFrete);
+    $('#shipping').live('change', calculaFrete);
+
+    $('select[name=shipping_address_id]').change(calculaFrete);
     $('select[name=country_id]').change(atualizaListaPaises);
     $('select[name=country_id]').trigger('change');
     $('select[name=shipping_country_id]').change(atualizaListaPaises);
@@ -212,7 +240,7 @@ function validaFormulario(evento) {
         meioPagamentoValido()) {
 
         $('input[type=submit]').val('Finalizando...');
-        $('input[type=submit]').disable();
+        $('input[type=submit]').attr('disabled', 'disabled');
 
         return true;
 

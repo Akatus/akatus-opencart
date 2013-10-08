@@ -327,25 +327,24 @@ class ControllerCheckoutCheckout extends Controller {
     }    
     
     public function findShippingMethods($ajax = true) {
-        $countryId = null;
-        $zoneId = null;
+        $country_id = '';
+        $zone_id = '';
+        $postcode = '';
         
         if ($ajax) {
-            $countryId = $this->request->get['country_id'];
-            $zoneId = $this->request->get['zone_id'];
+            $postcode = $this->request->get['postcode'];
             
         } else if ($this->customer->isLogged()) {
-            $countryId = $this->session->data['shipping_address']['country_id'];
-            $zoneId = $this->session->data['shipping_address']['zone_id'];
+            $postcode = $this->session->data['shipping_address']['postcode'];
                 
         } else {
-            $countryId = 30; // Brazil
-            $zoneId = 464; // Sao Paulo                
+            $postcode = 00000000;
         }
         
         $parametros = array(
-            'country_id'    => $countryId,
-            'zone_id'       => $zoneId
+            'zone_id' => $zone_id,
+            'country_id' => $country_id,
+            'postcode' => $postcode
         );
         
         $quote_data = array();
