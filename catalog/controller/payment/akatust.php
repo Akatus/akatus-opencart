@@ -135,7 +135,7 @@ class ControllerPaymentakatust extends Controller
 			<transacao>
 			
 			<desconto>'. $desconto .'</desconto>
-			<peso_total>0.00</peso_total>
+			<peso>0.00</peso>
 			<frete>'. $frete .'</frete>
 			<moeda>BRL</moeda>
 			<referencia>'.$pedido->row['order_id'].'</referencia>

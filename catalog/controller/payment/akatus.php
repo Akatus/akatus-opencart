@@ -142,7 +142,7 @@ class ControllerPaymentAkatus extends Controller
 			<codigo_de_seguranca>'.$request->post['cartao_codigo'].'</codigo_de_seguranca>
 			<expiracao>'.$request->post['cartao_mes'].'/'.$request->post['cartao_ano'].'</expiracao>
 			<desconto>'. $desconto .'</desconto>
-			<peso_total>0.00</peso_total>
+			<peso>0.00</peso>
 			<frete>'. $frete .'</frete>
 			<moeda>BRL</moeda>
 			<referencia>'.$pedido->row['order_id'].'</referencia>
