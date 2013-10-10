@@ -339,7 +339,7 @@ class AkatusPaymentBaseController extends Controller {
 
             <desconto>' . ( number_format(($desconto / 100) * $valor_total_compra, 2, '.', '') ) . '</desconto>
             <peso>0.00</peso>
-            <frete>' . $order['shipping_value'] . '</frete>
+            <frete>' . number_format($order['shipping_value'], 2, '.', '') . '</frete>
             <moeda>BRL</moeda>';
             
         $cartaoCredito = ($paymentCode === 'akatus');
