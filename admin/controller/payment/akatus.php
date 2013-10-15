@@ -29,7 +29,6 @@ class ControllerPaymentAkatus extends Controller
 
 	public function index() 
 	{
-	
 		$this->load->language('payment/akatus');
 		
 		$titulo = 'Akatus - Cartões de Crédito';
@@ -91,21 +90,21 @@ class ControllerPaymentAkatus extends Controller
 		 'separator' => ' :: '
 		 );
 		
-		
-						
 		$this->data['action'] = HTTPS_SERVER . 'index.php?route=payment/akatus&token=' . $this->session->data['token'];
 				
 		$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
 		
 		$this->load->model('localisation/order_status');
 		
+        $current_settings = $this->model_setting_setting->getSetting('akatus');
+
 		if (isset($this->request->post['akatus_sort_order'])) 
 		{
 			$this->data['akatus_sort_order'] = $this->request->post['akatus_sort_order'];
 		} 
 		else 
 		{
-			$this->data['akatus_sort_order'] = $this->config->get('akatus_sort_order'); 
+			$this->data['akatus_sort_order'] = isset($current_settings['akatus_sort_order']) ? $current_settings['akatus_sort_order'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_status'])) 
@@ -114,7 +113,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_status'] = $this->config->get('akatus_status'); 
+			$this->data['akatus_status'] = isset($current_settings['akatus_status']) ? $current_settings['akatus_status'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_tipo_conta'])) 
@@ -123,7 +122,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_tipo_conta'] = $this->config->get('akatus_tipo_conta'); 
+			$this->data['akatus_tipo_conta'] = isset($current_settings['akatus_tipo_conta']) ? $current_settings['akatus_tipo_conta'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_nome'])) 
@@ -132,7 +131,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_nome'] = $this->config->get('akatus_nome'); 
+			$this->data['akatus_nome'] = isset($current_settings['akatus_nome']) ? $current_settings['akatus_nome'] : ''; 
 		} 
 
 
@@ -142,7 +141,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_inicio'] = $this->config->get('akatus_inicio'); 
+			$this->data['akatus_inicio'] = isset($current_settings['akatus_inicio']) ? $current_settings['akatus_inicio'] : ''; 
 		} 
 		
 		if (isset($this->request->post['akatus_padrao'])) 
@@ -151,7 +150,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_padrao'] = $this->config->get('akatus_padrao'); 
+			$this->data['akatus_padrao'] = isset($current_settings['akatus_padrao']) ? $current_settings['akatus_padrao'] : ''; 
 		} 
 
 		$this->data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
@@ -162,7 +161,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_geo_zone_id'] = $this->config->get('akatus_geo_zone_id'); 
+			$this->data['akatus_geo_zone_id'] = isset($current_settings['akatus_geo_zone_id']) ? $current_settings['akatus_geo_zone_id'] : ''; 
 		} 
 		
 		if (isset($this->request->post['akatus_email_conta'])) 
@@ -171,7 +170,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_email_conta'] = $this->config->get('akatus_email_conta'); 
+			$this->data['akatus_email_conta'] = isset($current_settings['akatus_email_conta']) ? $current_settings['akatus_email_conta'] : ''; 
 		} 
 
 		
@@ -181,7 +180,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_token_nip'] = $this->config->get('akatus_token_nip'); 
+			$this->data['akatus_token_nip'] = isset($current_settings['akatus_token_nip']) ? $current_settings['akatus_token_nip'] : ''; 
 		} 
 		
 		if (isset($this->request->post['akatus_api_key'])) 
@@ -190,7 +189,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_api_key'] = $this->config->get('akatus_api_key'); 
+			$this->data['akatus_api_key'] = isset($current_settings['akatus_api_key']) ? $current_settings['akatus_api_key'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_limite_parcelas'])) 
@@ -199,7 +198,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_limite_parcelas'] = $this->config->get('akatus_limite_parcelas'); 
+			$this->data['akatus_limite_parcelas'] = isset($current_settings['akatus_limite_parcelas']) ? $current_settings['akatus_limite_parcelas'] : ''; 
 		} 
 		
 		if (isset($this->request->post['akatus_sem_juros'])) 
@@ -208,7 +207,7 @@ class ControllerPaymentAkatus extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_sem_juros'] = $this->config->get('akatus_sem_juros'); 
+			$this->data['akatus_sem_juros'] = isset($current_settings['akatus_sem_juros']) ? $current_settings['akatus_sem_juros'] : ''; 
 		} 
 
 

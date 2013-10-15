@@ -30,7 +30,6 @@ class ControllerPaymentAkatusb extends Controller
 	
 	public function index() 
 	{
-	
 		$this->load->language('payment/akatusb');
 		
 		$titulo = 'Boleto Akatus';
@@ -44,7 +43,7 @@ class ControllerPaymentAkatusb extends Controller
 			$this->session->data['success'] = 'Dados foram salvos com sucesso!';
 			$this->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
 		}
-	
+
 		if (isset($this->error['warning'])) 
 		{
 			$this->data['error_warning'] = $this->error['warning'];
@@ -98,7 +97,7 @@ class ControllerPaymentAkatusb extends Controller
 		
 		$this->load->model('localisation/order_status');
 		
-		#Salva todas as configurações
+        $current_settings = $this->model_setting_setting->getSetting('akatusb');
 			
 		if (isset($this->request->post['akatusb_sort_order'])) 
 		{
@@ -106,7 +105,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_sort_order'] = $this->config->get('akatusb_sort_order'); 
+			$this->data['akatusb_sort_order'] = isset($current_settings['akatusb_sort_order']) ? $current_settings['akatusb_sort_order'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatusb_status'])) 
@@ -115,7 +114,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_status'] = $this->config->get('akatusb_status'); 
+			$this->data['akatusb_status'] = isset($current_settings['akatusb_status']) ? $current_settings['akatusb_status'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_tipo_conta'])) 
@@ -124,7 +123,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_tipo_conta'] = $this->config->get('akatus_tipo_conta'); 
+			$this->data['akatus_tipo_conta'] = isset($current_settings['akatus_tipo_conta']) ? $current_settings['akatus_tipo_conta'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatusb_nome'])) 
@@ -133,7 +132,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_nome'] = $this->config->get('akatusb_nome'); 
+			$this->data['akatusb_nome'] = isset($current_settings['akatusb_nome']) ? $current_settings['akatusb_nome'] : ''; 
 		} 
 
 
@@ -143,7 +142,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_inicio'] = $this->config->get('akatusb_inicio'); 
+			$this->data['akatusb_inicio'] = isset($current_settings['akatusb_inicio']) ? $current_settings['akatusb_inicio'] : ''; 
 		} 
 		
 		
@@ -154,7 +153,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_desconto'] = $this->config->get('akatusb_desconto'); 
+			$this->data['akatusb_desconto'] = isset($current_settings['akatusb_desconto']) ? $current_settings['akatusb_desconto'] : ''; 
 			
 		}  
 
@@ -164,7 +163,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_padrao'] = $this->config->get('akatusb_padrao'); 
+			$this->data['akatusb_padrao'] = isset($current_settings['akatusb_padrao']) ? $current_settings['akatusb_padrao'] : ''; 
 		} 
 
 		$this->data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
@@ -175,7 +174,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatusb_geo_zone_id'] = $this->config->get('akatusb_geo_zone_id'); 
+			$this->data['akatusb_geo_zone_id'] = isset($current_settings['akatusb_geo_zone_id']) ? $current_settings['akatusb_geo_zone_id'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_email_conta'])) 
@@ -184,7 +183,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_email_conta'] = $this->config->get('akatus_email_conta'); 
+			$this->data['akatus_email_conta'] = isset($current_settings['akatus_email_conta']) ? $current_settings['akatus_email_conta'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatus_token_nip'])) 
@@ -193,7 +192,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_token_nip'] = $this->config->get('akatus_token_nip'); 
+			$this->data['akatus_token_nip'] = isset($current_settings['akatus_token_nip']) ? $current_settings['akatus_token_nip'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatusb_api_key'])) 
@@ -202,7 +201,7 @@ class ControllerPaymentAkatusb extends Controller
 		} 
 		else 
 		{
-			$this->data['akatus_api_key'] = $this->config->get('akatus_api_key'); 
+			$this->data['akatus_api_key'] = isset($current_settings['akatus_api_key']) ? $current_settings['akatus_api_key'] : ''; 
 		} 
 
 		$this->load->model('localisation/geo_zone');
