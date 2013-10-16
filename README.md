@@ -4,6 +4,10 @@
 
 # Módulo Akatus para OpenCart (1.5.3.1 ou superior)
 
+__Importante:__ Existem duas versões disponíveis para este módulo.
+Por padrão a versão para download é sem One Step Checkout.
+Caso queira utilizar a versão com One Step Checkout clique no link: https://github.com/Akatus/akatus-opencart/archive/one_step_checkout.zip
+
 ## Instalação
 
 __Atenção:__ Faça um backup completo dos arquivos e banco de dados da sua loja antes de iniciar a instalação.
@@ -14,7 +18,7 @@ __Atenção:__ Faça um backup completo dos arquivos e banco de dados da sua loj
 compras que precisaremos para atualizar os pagamentos. Se tudo der certo, aparecerá
 um “OK” ao término da execução.
 
-* Efetue login na Administração. Vá ao menu *Extensions >> Payments*. Aparecerão 3 novos módulos Akatus – Cartões de Crédito, Boleto Bancário e Transferência Eletrônica. Clique no link INSTALL, localizado ao lado direito de cada um deles e sem seguida em EDIT.
+* Efetue login na Administração. Vá ao menu *Extensions >> Payments*. Aparecerão 3 novos módulos Akatus – Cartões de Crédito, Boleto Bancário e Transferência Eletrônica. Clique no link INSTALL, localizado ao lado direito de cada um deles e em seguida em EDIT.
 
 ## Configuração
 
