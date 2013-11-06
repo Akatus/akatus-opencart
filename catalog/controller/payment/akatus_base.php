@@ -249,18 +249,19 @@ class AkatusPaymentBaseController extends Controller {
         
         $orderProducts = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = " . $orderId);
         $shippingValue = $this->db->query("SELECT value FROM `" . DB_PREFIX . "order_total` WHERE order_id = " . $orderId . " AND code = 'shipping'");
+        $coupon = $this->db->query("SELECT value FROM `" . DB_PREFIX . "order_total` WHERE order_id = " . $orderId . " AND code = 'coupon'");
+        $voucher = $this->db->query("SELECT value FROM `" . DB_PREFIX . "order_total` WHERE order_id = " . $orderId . " AND code = 'voucher'");
         
         $order['order_products'] = $orderProducts->rows;
         $order['shipping_value'] = (empty($shippingValue->row) ? 0 : $shippingValue->row['value']);
+        $order['coupon'] = (empty($coupon->row) ? 0 : $coupon->row);
+        $order['voucher'] = (empty($voucher->row) ? 0 : $voucher->row);
         
         return $order;
     }    
     
     protected function getXML($order) {
         $paymentCode = $order['payment_code'];
-        $desconto = $this->config->get($paymentCode . '_desconto');
-        $valor_total_compra = number_format($order['total'], 2, '.', '');
-
         $meioDePagamento = null;
         
         switch ($paymentCode) {
@@ -280,9 +281,19 @@ class AkatusPaymentBaseController extends Controller {
                 break;
         }
 
-        if ($desconto) {
-            $valor_total_compra = number_format($valor_total_compra - ($valor_total_compra * ($desconto / 100)), 2, '.', '');
+        $desconto = 0;
+        $descontoCoupon = 0;
+        $descontoVoucher = 0;
+
+        if ($order['coupon']) {
+            $descontoCoupon = abs($order['coupon']['value']);
         }
+
+        if ($order['voucher']) {
+            $descontoVoucher = abs($order['voucher']['value']);
+        }
+
+        $desconto = number_format($descontoCoupon + $descontoVoucher, 2, '.', '');
 
         $xml = '<?xml version="1.0" encoding="utf-8"?><carrinho>
           <recebedor>
@@ -337,7 +348,7 @@ class AkatusPaymentBaseController extends Controller {
             <referencia>' . ($order['order_id']) . '</referencia>
             <meio_de_pagamento>' . $meioDePagamento . '</meio_de_pagamento>
 
-            <desconto>' . ( number_format(($desconto / 100) * $valor_total_compra, 2, '.', '') ) . '</desconto>
+            <desconto>' . $desconto . '</desconto>
             <peso>0.00</peso>
             <frete>' . number_format($order['shipping_value'], 2, '.', '') . '</frete>
             <moeda>BRL</moeda>';
@@ -379,6 +390,7 @@ class AkatusPaymentBaseController extends Controller {
         unset($this->session->data['comment']);
         unset($this->session->data['order_id']);
         unset($this->session->data['coupon']);        
+        unset($this->session->data['vouchers']);        
     }
     
     protected function xml2array($contents, $get_attributes = 1, $priority = 'tag') {
