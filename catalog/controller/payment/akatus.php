@@ -74,21 +74,26 @@ class ControllerPaymentAkatus extends Controller
         $produtos_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE order_id = " . $order_id);
 		$frete_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'shipping' AND order_id = '".$order_id."'");
 		$cupom_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'coupon' AND order_id = '".$order_id."'");
-        $total_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'total' AND order_id = '".$order_id."'");
+		$voucher_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'voucher' AND order_id = '".$order_id."'");
 
-        $total = number_format($total_result->row['value'], 2, '.', '');
         $frete = number_format($frete_result->row['value'], 2, '.', '');
 
         $temCupomDesconto = (count($cupom_result->rows)) ? true : false;
+        $temVoucherDesconto = (count($voucher_result->rows)) ? true : false;
 
         $cupom = 0;
+        $voucher = 0;
         $desconto = 0;
 
         if ($temCupomDesconto) {
-            $valor_absoluto_cupom = abs($cupom_result->rows[0]['value']);
-            $cupom = number_format($valor_absoluto_cupom, 2, '.', '');
-            $desconto = $cupom;
+            $cupom = abs($cupom_result->rows[0]['value']);
         }
+				
+        if ($temVoucherDesconto) {
+            $voucher = abs($voucher_result->rows[0]['value']);
+        }
+
+        $desconto = number_format($cupom + $voucher, 2, '.', '');
 		
 		  $xml=utf8_encode('<?xml version="1.0" encoding="utf-8"?><carrinho>
 			<recebedor>
