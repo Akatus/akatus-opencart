@@ -1,29 +1,5 @@
 <?php
 
-/*
-+---------------------------------------------------+
-| 			 MÓDULO DE PAGAMENTO AKATUS 			|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- * @version 1.0 Beta
- **/
-
 require_once(DIR_SYSTEM . '../akatus/transacao.php');
 
 class ControllerPaymentakatust extends Controller 
@@ -135,18 +111,24 @@ class ControllerPaymentakatust extends Controller
                 </produto>';
             }
        
-			$xml .= '</produtos>
-			
-			<transacao>
-			
-			<desconto>'. $desconto .'</desconto>
-			<peso>0.00</peso>
-			<frete>'. $frete .'</frete>
-			<moeda>BRL</moeda>
-			<referencia>'.$pedido->row['order_id'].'</referencia>
-			<meio_de_pagamento>'.$_GET['tef'].'</meio_de_pagamento>
-			
-			</transacao>
+        $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
+        $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
+
+        $xml .= '</produtos>
+        
+        <transacao>
+        
+        <desconto>'. $desconto .'</desconto>
+        <peso>0.00</peso>
+        <frete>'. $frete .'</frete>
+        <moeda>BRL</moeda>
+        <referencia>'.$pedido->row['order_id'].'</referencia>
+        <meio_de_pagamento>'.$_GET['tef'].'</meio_de_pagamento>
+
+        <fingerprint_akatus>'.$fingerprint_akatus.'</fingerprint_akatus>				
+        <fingerprint_partner_id>'.$fingerprint_partner_id.'</fingerprint_partner_id>				
+        
+        </transacao>
 		
 		</carrinho>';
 

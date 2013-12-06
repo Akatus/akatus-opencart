@@ -1,27 +1,4 @@
 <?php
-/*
-+---------------------------------------------------+
-| 			 MÓDULO DE PAGAMENTO AKATUS 			|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- * @version 1.0 Beta
- **/
 
 require_once(DIR_SYSTEM . '../akatus/transacao.php');
 
@@ -137,26 +114,32 @@ class ControllerPaymentAkatus extends Controller
                 </produto>';
             }
 		   
-			$xml .= '</produtos>
-			
-			<transacao>
-			
-			<numero>'.$request->post['cartao_numero'].'</numero>
-			
-			<parcelas>'.$request->post['parcelas'].'</parcelas>
-			<codigo_de_seguranca>'.$request->post['cartao_codigo'].'</codigo_de_seguranca>
-			<expiracao>'.$request->post['cartao_mes'].'/'.$request->post['cartao_ano'].'</expiracao>
-			<desconto>'. $desconto .'</desconto>
-			<peso>0.00</peso>
-			<frete>'. $frete .'</frete>
-			<moeda>BRL</moeda>
-			<referencia>'.$pedido->row['order_id'].'</referencia>
-			<meio_de_pagamento>'. utf8_decode($request->post['bandeira_cartao']) .'</meio_de_pagamento>
-			<portador>
-				<nome>'. utf8_decode(strtoupper($request->post['cartao_titular'])) .'</nome>
-				<cpf>'.preg_replace("/[^0-9]/","",$request->post['cartao_cpf']).'</cpf>
-				<telefone>'.$request->post['cartao_telefone_ddd'].$request->post['cartao_telefone'].'</telefone>
-			</portador>
+        $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
+        $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
+
+        $xml .= '</produtos>
+        
+        <transacao>
+        
+        <numero>'.$request->post['cartao_numero'].'</numero>
+        
+        <parcelas>'.$request->post['parcelas'].'</parcelas>
+        <codigo_de_seguranca>'.$request->post['cartao_codigo'].'</codigo_de_seguranca>
+        <expiracao>'.$request->post['cartao_mes'].'/'.$request->post['cartao_ano'].'</expiracao>
+        <desconto>'. $desconto .'</desconto>
+        <peso>0.00</peso>
+        <frete>'. $frete .'</frete>
+        <moeda>BRL</moeda>
+        <referencia>'.$pedido->row['order_id'].'</referencia>
+        <meio_de_pagamento>'. utf8_decode($request->post['bandeira_cartao']) .'</meio_de_pagamento>
+        <portador>
+            <nome>'. utf8_decode(strtoupper($request->post['cartao_titular'])) .'</nome>
+            <cpf>'.preg_replace("/[^0-9]/","",$request->post['cartao_cpf']).'</cpf>
+            <telefone>'.$request->post['cartao_telefone_ddd'].$request->post['cartao_telefone'].'</telefone>
+        </portador>
+
+        <fingerprint_akatus>'.$fingerprint_akatus.'</fingerprint_akatus>				
+        <fingerprint_partner_id>'.$fingerprint_partner_id.'</fingerprint_partner_id>				
 			
 		</transacao>
 		

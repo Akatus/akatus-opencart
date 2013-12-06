@@ -283,6 +283,24 @@ $parcelamento='<UL id="lista_de_parcelas">';
 		
 		</form>
         
+        <script>
+            <?php
+                $this->load->model('setting/setting');
+                $current_settings = $this->model_setting_setting->getSetting('akatus');
+                $is_sandbox = $current_settings['akatus_tipo_conta'] != 'PRODUCAO';
+                $public_token = isset($current_settings['akatus_public_token']) ? $current_settings['akatus_public_token'] : '';
+            ?>
+
+            $.getScript("https://static.akatus.com/js/akatus.min.js",function() {
+                var formulario = document.getElementById('pagamento');
+                var config = {
+                    <?php if ($is_sandbox) { echo "sandbox: true,"; } ?>
+                    publicToken: '<?php echo $public_token; ?>'
+                };
+                Akatus.init(formulario, config);
+            });
+        </script>
+
         <div id="popup" class="popup">
 <P><img src="/image/fechar.jpg" width="20" height="20" align="absmiddle" /><a style="color:#F00; font-weight:bold" href="javascript:ocultar_popup()">Clique aqui para fechar</a></P>
 <p><strong>O que é o Código de Segurança?</strong><br />

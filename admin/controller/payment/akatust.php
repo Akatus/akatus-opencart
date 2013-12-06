@@ -1,27 +1,4 @@
 <?php 
-/*
-+---------------------------------------------------+
-| 			 MÓDULO DE PAGAMENTO AKATUS 			|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
-
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- * @version 1.0 Beta
- **/
 
 class ControllerPaymentakatust extends Controller 
 {
@@ -151,6 +128,15 @@ class ControllerPaymentakatust extends Controller
 		$this->data['akatus_email_conta'] = $this->request->post['akatus_email_conta'];
 		} else {
 		$this->data['akatus_email_conta'] = isset($current_settings['akatus_email_conta']) ? $current_settings['akatus_email_conta'] : ''; 
+		} 
+
+		if (isset($this->request->post['akatus_public_token'])) 
+		{
+			$this->data['akatus_public_token'] = $this->request->post['akatus_public_token'];
+		} 
+		else 
+		{
+			$this->data['akatus_public_token'] = isset($current_settings['akatus_public_token']) ? $current_settings['akatus_public_token'] : ''; 
 		} 
 		
 		if (isset($this->request->post['akatus_token_nip'])) {
