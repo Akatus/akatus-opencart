@@ -16,7 +16,7 @@ __Atenção:__ Faça um backup completo dos arquivos e banco de dados da sua loj
 
 * Execute apenas 1 vez o arquivo “akatus_db_install.php”, acessando ele através de http://sualoja.com.br/akatus_db_install.php. Este arquivo criará os status de
 compras que precisaremos para atualizar os pagamentos. Se tudo der certo, aparecerá
-um “OK” ao término da execução.
+a mensagem “Os status das transacoes da Akatus foram inseridos com sucesso” ao término da execução.
 
 * Efetue login na Administração. Vá ao menu *Extensions >> Payments*. Aparecerão 3 novos módulos Akatus – Cartões de Crédito, Boleto Bancário e Transferência Eletrônica. Clique no link INSTALL, localizado ao lado direito de cada um deles e em seguida em EDIT.
 
