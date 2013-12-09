@@ -89,6 +89,12 @@
 	    <td><input name="akatus_email_conta" type="text" id="akatus_email_conta" value="<?php echo $akatus_email_conta; ?>" size='80' />
 	      <br /></td>
 	    </tr>
+      <tr>
+        <td width="18%"><span class="required">*</span> Public Token </td>
+        <td width="82%">
+		<input name="akatus_public_token" type="text" id="akatus_public_token" value="<?php echo $akatus_public_token; ?>" size="70" />
+          <br /></td>
+      </tr>
 	  <tr>
 	    <td><span class="required">*</span> Token NIP </td>
 	    <td><input name="akatus_token_nip" type="text" id="akatus_token_nip" value="<?php echo $akatus_token_nip; ?>" size="70" />

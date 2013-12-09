@@ -9,7 +9,7 @@ class ControllerPaymentAkatus extends AkatusPaymentBaseController {
         $order = $this->getOrder($order_id);
         
         $xml = $this->getXML($order);
-        $url = $this->getUrl();
+        $url = $this->getUrl($payment_method = 'akatus');
         
         $this->clearSession();
         

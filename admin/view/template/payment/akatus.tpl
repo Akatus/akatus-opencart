@@ -50,7 +50,6 @@
           </select></td>
       </tr>
 	  	  
-
       <tr>
         <td>Ordem:</td>
         <td><input type="text" name="akatus_sort_order" value="<?php echo $akatus_sort_order; ?>" size="1" /></td>
@@ -94,27 +93,30 @@
         <td width="18%"><span class="required">*</span> E-mail da conta:</td>
         <td width="82%">
 		<input name="akatus_email_conta" type="text" id="akatus_email_conta" value="<?php echo $akatus_email_conta; ?>" size='80' />
-          <br />
-
+          <br /></td>
       </tr>
 	  
-	        <tr>
+      <tr>
+        <td width="18%"><span class="required">*</span> Public Token </td>
+        <td width="82%">
+		<input name="akatus_public_token" type="text" id="akatus_public_token" value="<?php echo $akatus_public_token; ?>" size="70" />
+          <br /></td>
+      </tr>
+
+      <tr>
         <td width="18%"><span class="required">*</span> Token NIP </td>
         <td width="82%">
 		<input name="akatus_token_nip" type="text" id="akatus_token_nip" value="<?php echo $akatus_token_nip; ?>" size="70" />
-          <br />
-
+          <br /></td>
       </tr>
-	  
   
-	        <tr>
+      <tr>
         <td width="18%"><span class="required">*</span>API Key</td>
         <td width="82%"><input name="akatus_api_key" type="text" id="akatus_api_key" value="<?php echo $akatus_api_key; ?>" size="70" />
-          <br />
-
-		  
+          <br /></td>
       </tr>
-	        <tr>
+
+      <tr>
         <td width="18%"><span class="required">*</span> Número máximo de parcelas</td>
         <td width="82%"><label for="akatus_limite_parcelas"></label>
           <select name="akatus_limite_parcelas" id="akatus_limite_parcelas">
@@ -123,8 +125,8 @@
           <option value="<?php echo $i; ?>" <?php if($akatus_limite_parcelas==$i) echo 'selected="selected"' ?> ><?php echo $i; ?></option>
           <?php } ?>
           
-        </select>        </tr>
-	  
+        </select>
+      </tr>
 	  
     </table>
     </form>

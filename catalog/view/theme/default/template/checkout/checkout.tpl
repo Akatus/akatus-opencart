@@ -68,6 +68,25 @@
 <input type="hidden" id="logged" name="logged" value="<?php if ($logged) echo 'true'; ?>" />
 <input type="hidden" id="shipping_required" name="shipping_required" value="<?php if ($shipping_required) echo 'true'; ?>" />
 
+<script type="text/javascript">
+    <?php
+        $this->load->model('setting/setting');
+        $current_settings = $this->model_setting_setting->getSetting('akatus');
+        $is_sandbox = $current_settings['akatus_tipo_conta'] != 'PRODUCAO';
+        $public_token = isset($current_settings['akatus_public_token']) ? $current_settings['akatus_public_token'] : '';
+    ?>
+
+    $.getScript("https://static.akatus.com/js/akatus.min.js",function() {
+        var formulario = $('#one-step-checkout');
+        var config = {
+            <?php if ($is_sandbox) { echo "sandbox: true,"; } ?>
+            publicToken: '<?php echo $public_token; ?>'
+        };
+        Akatus.init(formulario, config);
+    });
+
+</script>
+
 <script type="text/javascript" src="catalog/view/javascript/akatus.js"></script>
 
 <?php echo $content_bottom; ?>

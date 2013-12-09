@@ -339,12 +339,17 @@ class AkatusPaymentBaseController extends Controller {
                          <desconto>0.00</desconto>
                      </produto>';           
         }
-        
+
+        $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
+        $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
 
         $xml .= '</produtos>
               
           <transacao>
-          
+
+            <fingerprint_akatus>' . $fingerprint_akatus . '</fingerprint_akatus>
+            <fingerprint_partner_id>' . $fingerprint_partner_id . '</fingerprint_partner_id>
+
             <referencia>' . ($order['order_id']) . '</referencia>
             <meio_de_pagamento>' . $meioDePagamento . '</meio_de_pagamento>
 
@@ -373,14 +378,16 @@ class AkatusPaymentBaseController extends Controller {
         return utf8_encode($xml);
     }
 
-    protected function getUrl() {
-        $tipo_conta = $this->config->get('akatus_tipo_conta');
+    protected function getUrl($payment_method) {
+		$this->load->model('setting/setting');
+        $current_settings = $this->model_setting_setting->getSetting($payment_method);
+        $is_sandbox = $current_settings['akatus_tipo_conta'] != 'PRODUCAO';
 
-        if ($tipo_conta === 'PRODUCAO') {
-            return "https://www.akatus.com/api/v1/carrinho.xml";
+        if ($is_sandbox) {
+            return "https://sandbox.akatus.com/api/v1/carrinho.xml";
         }
 
-        return "https://dev.akatus.com/api/v1/carrinho.xml";
+        return "https://www.akatus.com/api/v1/carrinho.xml";
     }
     
     protected function clearSession() {
