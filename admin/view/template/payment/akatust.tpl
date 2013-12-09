@@ -109,7 +109,4 @@
     </form>
   </div>
 </div>
-<center>
-  <a href="http://www.andresa.com.br" target="_blank">Andresa Web Studio</a>
-</center>
 </body>
