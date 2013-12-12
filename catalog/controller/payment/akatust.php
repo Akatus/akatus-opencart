@@ -113,6 +113,7 @@ class ControllerPaymentakatust extends Controller
        
         $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
         $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
+        $ipv4_address = filter_var($pedido->row['ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
 
         $xml .= '</produtos>
         
@@ -127,7 +128,8 @@ class ControllerPaymentakatust extends Controller
 
         <fingerprint_akatus>'.$fingerprint_akatus.'</fingerprint_akatus>				
         <fingerprint_partner_id>'.$fingerprint_partner_id.'</fingerprint_partner_id>				
-        
+        <ip>'.$ipv4_address.'</ip>
+
         </transacao>
 		
 		</carrinho>';
