@@ -168,6 +168,7 @@ class ControllerPaymentakatust extends Controller
             $comment .= '<a href="' . $akatus['resposta']['url_retorno'] . '" target="_blank">' . $akatus['resposta']['url_retorno'] . '</a>';
 
             $this->model_checkout_order->confirm($order_id, $this->config->get('akatust_padrao'), $comment, $notify = true);
+            $this->db->query("INSERT INTO akatus_transacoes (id_pedido, id_akatus) VALUES(". $pedido->row['order_id'] . ",'" .$akatus['resposta']['transacao'] . "')");
 
             $this->redirect($akatus['resposta']['url_retorno']);
         }	

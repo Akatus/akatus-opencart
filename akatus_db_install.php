@@ -1,42 +1,23 @@
 <?php
-/*
-+---------------------------------------------------+
-| 			 MÓDULO DE PAGAMENTO AKATUS 			|
-|---------------------------------------------------|
-|													|
-|  Este módulo permite receber pagamentos através   |
-|  do gateway de pagamentos Akatus em lojas			|
-|  utilizando a plataforma Prestashop				|
-|													|
-|---------------------------------------------------|
-|													|
-|  Desenvolvido por: www.andresa.com.br				|
-|					 contato@andresa.com.br			|
-|													|
-+---------------------------------------------------+
-*/
 
-/**
- * @author Andresa Martins da Silva
- * @copyright Andresa Web Studio
- * @site http://www.andresa.com.br
- * @version 1.0 Beta
- **/
-
-#Configuração da loja Opencart
 require_once('config.php');
-   
-#Inicialização
 require_once(DIR_SYSTEM . 'startup.php');
 
-#banco de dados 
+function missing_order_status($db) {
+    $result = $db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE order_status_id >= 10200");
+
+    if (empty($result->rows)) {
+        return true;
+    }
+
+    return false;
+}
+
+
+
 $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 
-if (script_already_executed($db)) {
-
-    header("HTTP/1.0 404 Not Found");
-
-} else {
+if (missing_order_status($db)) {
 
     $query = $db->query("SELECT COUNT( * ) AS `Registros` , `language_id` FROM `" . DB_PREFIX. "order_status` GROUP BY `language_id` ORDER BY `language_id`");
 
@@ -51,17 +32,22 @@ if (script_already_executed($db)) {
         (10206, " . $reg['language_id'] . ", 'Estornado');");
     }
 
-    echo "Os status das transacoes da Akatus foram inseridos com sucesso!";
+    echo "Os status das transacoes da Akatus foram inseridos com sucesso!\n";
+
+} else {
+
+    header("HTTP/1.0 404 Not Found");
+
 }
 
-function script_already_executed($db) {
-    $result = $db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE order_status_id >= 10200");
+$db->query("CREATE TABLE IF NOT EXISTS `akatus_transacoes` (
+    `id` INT NULL AUTO_INCREMENT,
+    `id_pedido` INT NOT NULL,
+    `id_akatus` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY IDX_ID_PEDIDO (`id_pedido`))
+");
 
-    if (! empty($result->rows)) {
-        return true;
-    }
-
-    return false;
- }
+echo "A tabela para armazenar os IDs de transações da Akatus foi criada com sucesso!\n";
 
 ?>

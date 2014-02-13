@@ -183,18 +183,21 @@ class ControllerPaymentAkatus extends Controller
 		{
 			$output = "<script>window.location.href = 'index.php?route=information/akatus&tipo=1';</script>"; 
             $this->model_checkout_order->confirm($order_id, $this->config->get('akatus_padrao'), $comment = '', $notify = true);
+            $this->db->query("INSERT INTO akatus_transacoes (id_pedido, id_akatus) VALUES(". $pedido->row['order_id'] . ",'" .$akatus['resposta']['transacao'] . "')");
 		}
 
 		else if($akatus['resposta']['status'] == 'Cancelado')
 		{
 			$output = "<script>window.location.href = 'index.php?route=information/akatus&tipo=2';</script>"; 
             $this->model_checkout_order->confirm($order_id, Transacao::ID_CANCELADO, $comment = '', $notify = true);	
+            $this->db->query("INSERT INTO akatus_transacoes (id_pedido, id_akatus) VALUES(". $pedido->row['order_id'] . ",'" .$akatus['resposta']['transacao'] . "')");
 		}
 		
         else if ($akatus['resposta']['status']=='Aprovado')
 		{
 			$output = "<script>window.location.href = 'index.php?route=information/akatus&tipo=3';</script>"; 
             $this->model_checkout_order->confirm($order_id, Transacao::ID_APROVADO, $comment = '', $notify = true);
+            $this->db->query("INSERT INTO akatus_transacoes (id_pedido, id_akatus) VALUES(". $pedido->row['order_id'] . ",'" .$akatus['resposta']['transacao'] . "')");
 		}
 		
 		if (!empty($this->session->data['order_id'])) 
