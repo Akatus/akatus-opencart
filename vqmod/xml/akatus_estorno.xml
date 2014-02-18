@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+        <id>Akatus - Estorno</id>
+        <version>1.0.0</version>
+        <vqmver>2.4.1</vqmver>
+        <author>akatus</author>
+        
+        <file name="admin/controller/sale/order.php">
+                <operation>
+
+                        <search position="after"><![CDATA[
+                        $this->data['success'] = $this->language->get('text_success');
+                        ]]></search>
+                        
+                        <add><![CDATA[
+                        if ($this->request->post['order_status_id'] == 10206) { // Estornado
+
+                            $transacao_akatus = $this->db->query("SELECT id_akatus FROM akatus_transacoes WHERE id_pedido = ".$this->request->get['order_id']);
+
+                            $tipo_conta = $this->config->get('akatus_tipo_conta');
+                            $url = ($tipo_conta === 'PRODUCAO') ? 'https://sandbox.akatus.com/api/v1/estornar-transacao.json' : 'https://www.akatus.com/api/v1/estornar-transacao.json'; 
+                            $json_object = new stdClass();
+                            $json_object->estorno = new stdClass();
+                            $json_object->estorno->transacao = $transacao_akatus->row['id_akatus'];
+                            $json_object->estorno->api_key = $this->config->get('akatus_api_key');
+                            $json_object->estorno->email = $this->config->get('akatus_email_conta');
+
+                            $curl = curl_init($url);
+                            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+                            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+                            curl_setopt($curl, CURLOPT_POST, 1);
+                            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+                            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($json_object));
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+                            $response = json_decode(curl_exec($curl), $assoc = true);
+                            curl_close($curl);
+
+                            if ($response['resposta']['codigo-retorno'] == 0) {
+                                $this->data['success'] = 'Transação estornada com sucesso. Aguarde o NIP para a atualização do pedido na sua loja.';
+
+                            } else {
+                                $this->data['error'] = 'Não foi possível estornar a transação: ' . $response['resposta']['mensagem'];
+
+                            }
+
+                        } else {
+
+                            $this->data['success'] = $this->language->get('text_success');
+
+                        }
+                        ]]></add>
+                        
+                </operation>
+        </file> 
+</modification>
