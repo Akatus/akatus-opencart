@@ -37,7 +37,7 @@
                             curl_close($curl);
 
                             if ($response['resposta']['codigo-retorno'] == 0) {
-                                $this->data['success'] = 'Transação estornada com sucesso. Aguarde o NIP para a atualização do pedido na sua loja.';
+                                $this->data['success'] = $this->language->get('text_success');
 
                             } else {
                                 $this->data['error'] = 'Não foi possível estornar a transação: ' . $response['resposta']['mensagem'];
@@ -47,7 +47,6 @@
                         } else {
 
                             $this->data['success'] = $this->language->get('text_success');
-
                         }
                         ]]></add>
                         
