@@ -26,33 +26,35 @@
 
     <span class="required">*</span> Sobrenome:
     <input type="text" name="lastname" value="" class="akatus-field" />
-
-    <span class="required">*</span> Endereço:
-    <input type="text" name="address_1" value="" class="akatus-field" />
-
-    <span class="required">*</span> Bairro:<br />
-    <input type="text" name="address_2" value="" class="akatus-field" />
-    
-    <span class="required">*</span> Cidade:
-    <input type="text" name="city" value="" class="akatus-field" />
     
     <span id="shipping-postcode-required" class="required">*</span> CEP:
-    <input type="text" name="postcode" value="" class="akatus-field" />
+    <input type="text" name="postcode" id="postcode" value="" class="akatus-field" />
 
-    <span class="required">*</span> País:
-    <select name="country_id" class="akatus-field">
-        <option value="">--- Selecione ---</option>
-        <?php foreach ($countries as $country) { ?>
-        <?php if ($country['country_id'] == $country_id) { ?>
-        <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
-        <?php } else { ?>
-        <option value="<?php echo $country['country_id']; ?>"><?php echo $country['name']; ?></option>
-        <?php } ?>
-        <?php } ?>
-    </select>
+    <div id="address_container">
+      <span class="required">*</span> Endereço:
+      <input type="text" name="address_1" id="address_1" value="" class="akatus-field" />
 
-    <span class="required">*</span> Estado:
-    <select name="zone_id" class="akatus-field">--- Selecione ---</select>
+      <span class="required">*</span> Bairro:<br />
+      <input type="text" name="address_2" id="address_2" value="" class="akatus-field" />
+      
+      <span class="required">*</span> Cidade:
+      <input type="text" name="city" id="city" value="" class="akatus-field" />
+
+      <span class="required">*</span> Estado:
+      <select name="zone_id" id="zone_id" class="akatus-field">--- Selecione ---</select>
+
+      <span class="required">*</span> País:
+      <select name="country_id" class="akatus-field">
+          <option value="">--- Selecione ---</option>
+          <?php foreach ($countries as $country) { ?>
+          <?php if ($country['country_id'] == $country_id) { ?>
+          <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
+          <?php } else { ?>
+          <option value="<?php echo $country['country_id']; ?>"><?php echo $country['name']; ?></option>
+          <?php } ?>
+          <?php } ?>
+      </select>
+    </div>
     
     <br />
     <br />
@@ -60,6 +62,8 @@
 
 <script>
     $(function() {
+        $('#postcode').mask('00000-000');
+
         $('input[name=payment_address]').change(function() {
 
             switch ($(this).val()) {
@@ -77,4 +81,38 @@
             }
         });
     });
+
+    $('#postcode').blur(function(){
+        var cep = $(this).val();
+        $('#address_container').slideDown();
+        $('#address_1').focus();
+
+        $.ajax({
+            url: "https://lvws0001.lojablindada.com/endereco/?format=json&cep="+cep,
+            jsonp: "callback",
+            dataType: "jsonp",
+            data: {
+                format: "json"
+            },
+            success: function( response ) {
+
+                $('#address_1').val(response.endereco);
+                $('#address_2').val(response.bairro);
+                $('#city').val(response.cidade);
+
+                $('#zone_id option').each(function() {
+                    var estado = $(this).html();
+                    var estado_slug = slug_estado(estado);
+                    
+                    if(estado_slug.toUpperCase() == response.estado){
+                        $(this).prop("selected", true); 
+                    }
+                });
+            }
+        });
+    })
 </script>
+
+<style type="text/css">
+    #address_container { display: none; }
+</style>

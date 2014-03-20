@@ -293,8 +293,6 @@ class AkatusPaymentBaseController extends Controller {
             $descontoVoucher = abs($order['voucher']['value']);
         }
 
-        $desconto = number_format($descontoCoupon + $descontoVoucher, 2, '.', '');
-
         $xml = '<?xml version="1.0" encoding="utf-8"?><carrinho>
           <recebedor>
               <api_key>' . $this->config->get('akatus_api_key') . '</api_key>
@@ -302,19 +300,19 @@ class AkatusPaymentBaseController extends Controller {
           </recebedor>
           
           <pagador>
-              <nome>' . $order['firstname'] . ' ' . $order['lastname'] . '</nome>
+              <nome><![CDATA[' . utf8_decode($order['firstname'] . ' ' . $order['lastname']) . ']]></nome>
               <email>' . $order['email'] . '</email>
-				<enderecos>
-		            <endereco>
-		                <tipo>entrega</tipo>
-		                <logradouro>'.$order['payment_address_1'].'</logradouro>
+                <enderecos>
+                    <endereco>
+                        <tipo>entrega</tipo>
+                        <logradouro>'.$order['payment_address_1'].'</logradouro>
                         <bairro>'.utf8_decode($order['payment_address_2']).'</bairro>
-		                <cidade>'.utf8_decode($order['payment_city']).'</cidade>
-		                <estado>'.$order['payment_zone_code'].'</estado>
-		                <pais>'.$order['payment_iso_code_3'].'</pais>
-		                <cep>'.$order['payment_postcode'].'</cep>
-		            </endereco>
-		        </enderecos>
+                        <cidade>'.utf8_decode($order['payment_city']).'</cidade>
+                        <estado>'.utf8_decode($order['payment_zone_code']).'</estado>
+                        <pais>'.utf8_decode($order['payment_iso_code_3']).'</pais>
+                        <cep>'.$order['payment_postcode'].'</cep>
+                    </endereco>
+                </enderecos>
 
               <telefones>
                   <telefone>
@@ -325,24 +323,33 @@ class AkatusPaymentBaseController extends Controller {
           </pagador>
           
           <produtos>';
-
+        
+        $valor_total = 0;
         foreach ($order['order_products'] as $order_product) {
             $valor_produto = number_format($order_product['price'], 2, '.', '');
             
             $xml .= '<produto>
                          <codigo>' . $order_product['product_id'] . '</codigo>
-                         <descricao>' . $order_product['name'] . '</descricao>
+                         <descricao><![CDATA[' . $order_product['name'] . ']]></descricao>
                          <quantidade>' . $order_product['quantity'] . '</quantidade>
                          <preco>' . $valor_produto . '</preco>
                          <peso>0.00</peso>
                          <frete>0.00</frete>
                          <desconto>0.00</desconto>
                      </produto>';           
+                     $valor_total += $valor_produto * $order_product['quantity'];
         }
 
         $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
         $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
         $ipv4_address = filter_var($order['ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+        
+        $desconto = number_format($descontoCoupon + $descontoVoucher, 2, '.', '');
+
+        if(isset($order['descontoPaymentMethod']) && !empty($order['descontoPaymentMethod'])) {
+            $descontoPaymentMethod = $valor_total * ($order['descontoPaymentMethod'] / 100);
+            $desconto = number_format($descontoPaymentMethod + $desconto, 2, '.', '');
+        }
 
         $xml .= '</produtos>
               

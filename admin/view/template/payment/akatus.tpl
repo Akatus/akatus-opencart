@@ -88,21 +88,14 @@
 	      <option value="SANDBOX" selected="selected">Sandbox</option> <?php } ?>
 	      </select></td>
 	    </tr>
-  
+
       <tr>
         <td width="18%"><span class="required">*</span> E-mail da conta:</td>
         <td width="82%">
-		<input name="akatus_email_conta" type="text" id="akatus_email_conta" value="<?php echo $akatus_email_conta; ?>" size='80' />
+    <input name="akatus_email_conta" type="text" id="akatus_email_conta" value="<?php echo $akatus_email_conta; ?>" size='80' />
           <br /></td>
       </tr>
-	  
-      <tr>
-        <td width="18%"><span class="required">*</span> Public Token </td>
-        <td width="82%">
-		<input name="akatus_public_token" type="text" id="akatus_public_token" value="<?php echo $akatus_public_token; ?>" size="70" />
-          <br /></td>
-      </tr>
-
+  
       <tr>
         <td width="18%"><span class="required">*</span> Token NIP </td>
         <td width="82%">
@@ -113,6 +106,13 @@
       <tr>
         <td width="18%"><span class="required">*</span>API Key</td>
         <td width="82%"><input name="akatus_api_key" type="text" id="akatus_api_key" value="<?php echo $akatus_api_key; ?>" size="70" />
+          <br /></td>
+      </tr>
+    
+      <tr>
+        <td width="18%"><span class="required">*</span> Public Token </td>
+        <td width="82%">
+    <input name="akatus_public_token" type="text" id="akatus_public_token" value="<?php echo $akatus_public_token; ?>" size="70" />
           <br /></td>
       </tr>
 

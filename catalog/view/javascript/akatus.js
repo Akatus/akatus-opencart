@@ -117,6 +117,28 @@ function atualizaValores() {
     });
 }
 
+function pegarDescontoDoMetodo(){
+    $.ajax({
+        url: 'index.php?route=checkout/checkout/calculate',
+        type: 'post',
+        data: {
+            payment_method: $(this).val()
+        },
+        dataType: 'html',
+
+        beforeSend: function() {
+        },
+        complete: function() {
+        },
+        success: function(html) {
+            $('#total').empty();
+            $('#total').append(html);
+
+            atualizaParcelamento();
+        }
+    });
+}
+
 function calculaFrete() {
     var countryId, zoneId, postcode;
 
@@ -207,6 +229,7 @@ $(function() {
     }
     
     $('input[name=shipping_method]').live('change', atualizaValores);
+    $('input[name=payment_method]').live('change', pegarDescontoDoMetodo);
     
     $('input[name=postcode]').change(calculaFrete);
     $('input[name=shipping_postcode]').change(calculaFrete);
@@ -713,4 +736,19 @@ function mostrar_popup() {
 function ocultar_popup() {
     var popup = document.getElementById('popup');
     popup.style.display = 'none';
-}
+}
+
+function slug_estado(estado){
+    var accent_map = {
+        'á': 'a', 'ã': 'a', // a
+        'í': 'i',           // i
+        'ô': 'o'            // o
+    };
+
+    var estado_slug = '';
+    for (var i = 0; i < estado.length; i++) {
+        estado_slug += accent_map[estado.charAt(i)] || estado.charAt(i);       
+    }
+
+    return estado_slug;
+}

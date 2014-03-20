@@ -591,10 +591,15 @@ class ControllerCheckoutCheckout extends Controller {
 
     public function calculate($ajax = true) {
         if ($ajax) {
-            if ($this->request->post['shipping_method']) {
+            if (isset($this->request->post['shipping_method'])) {
                 $shipping = explode('.', $this->request->post['shipping_method']);
                 $this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
-            }  
+            }
+
+            if (isset($this->request->post['payment_method'])) {
+                $this->session->data['payment_method'] = array();
+                $this->session->data['payment_method']['code'] = $this->request->post['payment_method'];
+            } 
         }
         
         $total_data = array();

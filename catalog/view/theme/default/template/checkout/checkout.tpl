@@ -72,14 +72,22 @@
     <?php
         $this->load->model('setting/setting');
         $current_settings = $this->model_setting_setting->getSetting('akatus');
-        $is_sandbox = $current_settings['akatus_tipo_conta'] != 'PRODUCAO';
+        //$is_sandbox = $current_settings['akatus_tipo_conta'] != 'PRODUCAO';
         $public_token = isset($current_settings['akatus_public_token']) ? $current_settings['akatus_public_token'] : '';
     ?>
 
     $.getScript("https://static.akatus.com/js/akatus.min.js",function() {
         var formulario = $('#one-step-checkout');
         var config = {
-            <?php if ($is_sandbox) { echo "sandbox: true,"; } ?>
+            <?php
+                if (isset($current_settings['akatus_tipo_conta'])){
+                    if($current_settings['akatus_tipo_conta'] != 'PRODUCAO'){
+                        echo "sandbox: true,";
+                    }
+                }else{
+                    echo "sandbox: true,";
+                }
+            ?>
             publicToken: '<?php echo $public_token; ?>'
         };
         Akatus.init(formulario, config);
@@ -88,6 +96,7 @@
 </script>
 
 <script type="text/javascript" src="catalog/view/javascript/akatus.js"></script>
+<script type="text/javascript" src="catalog/view/javascript/jquery.mask.min.js"></script>
 
 <?php echo $content_bottom; ?>
 <?php echo $footer; ?>

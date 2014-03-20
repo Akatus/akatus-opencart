@@ -15,6 +15,10 @@ class ControllerPaymentAkatusb extends Controller
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') 
 		{
 			$this->load->model('setting/setting');
+
+			$this->request->post['akatusb_discount'] = str_replace(',', '.', $this->request->post['akatusb_discount']);
+			$this->request->post['akatusb_discount'] = number_format($this->request->post['akatusb_discount'], 2, '.', '');
+
 			$this->model_setting_setting->editSetting('akatusb', $this->request->post);				
 			$this->session->data['success'] = 'Dados foram salvos com sucesso!';
 			$this->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
@@ -82,6 +86,15 @@ class ControllerPaymentAkatusb extends Controller
 		else 
 		{
 			$this->data['akatusb_sort_order'] = isset($current_settings['akatusb_sort_order']) ? $current_settings['akatusb_sort_order'] : ''; 
+		} 
+
+		if (isset($this->request->post['akatusb_discount'])) 
+		{
+			$this->data['akatusb_discount'] = $this->request->post['akatusb_discount'];
+		} 
+		else 
+		{
+			$this->data['akatusb_discount'] = isset($current_settings['akatusb_discount']) ? $current_settings['akatusb_discount'] : ''; 
 		} 
 
 		if (isset($this->request->post['akatusb_status'])) 

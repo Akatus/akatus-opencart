@@ -10,6 +10,12 @@ class ControllerPaymentAkatusb extends AkatusPaymentBaseController {
         $order_id = $this->saveOrder();
         $order = $this->getOrder($order_id);
         
+        $descontoPaymentMethod = $this->config->get('akatusb_discount');
+        if(!empty($descontoPaymentMethod)) {
+            $descontoPaymentMethod = number_format($descontoPaymentMethod, 2, '.', '');
+            $order['descontoPaymentMethod'] = number_format($descontoPaymentMethod, 2, '.', '');
+        }
+
         $xml = $this->getXML($order);
         $url = $this->getUrl($payment_method = 'akatusb');
 
