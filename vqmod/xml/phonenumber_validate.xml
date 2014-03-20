@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Modifica a validação do Telefone (telephone).</id>
+	<version>1.0</version>
+	<vqmver>2.2.1</vqmver>
+	<author>Akatus</author>
+	
+	<!-- Inicio: catalog/controller/account/*.php -->
+	<file path="catalog/controller/account/" name="address.php,register.php">
+		<operation>
+			<search regex="true" position="replace"><![CDATA[~if\s*.*\['telephone'\]\)\s<.*\['telephone'\]\)\s>\s*.*~]]></search>
+			<add><![CDATA[if ((preg_replace("/[^0-9]/","",$this->request->post['telephone'])) < 10 || (preg_replace("/[^0-9]/","",$this->request->post['telephone'])) > 11 ) {]]></add>
+		</operation>
+	</file>
+	<!-- Fim: catalog/controller/account/*.php -->
+	
+	<!-- Inicio: catalog/controller/affiliate/*.php -->
+	<file path="catalog/controller/affiliate/" name="edit.php,register.php">
+		<operation>
+			<search regex="true" position="replace"><![CDATA[~if\s*.*\['telephone'\]\)\s<.*\['telephone'\]\)\s>\s*.*~]]></search>
+			<add><![CDATA[if ((preg_replace("/[^0-9]/","",$this->request->post['telephone'])) < 10 || (preg_replace("/[^0-9]/","",$this->request->post['telephone'])) > 11 ) {]]></add>
+		</operation>
+	</file>
+	<!-- Fim: catalog/controller/affiliate/*.php -->
+	
+	<!-- Inicio: catalog/controller/checkout/*.php -->
+	<file path="catalog/controller/checkout/" name="cart.php,guest_shipping.php,guest.php,manual.php,payment_address.php,register.php,shipping_address.php">
+		<operation>
+			<search regex="true" position="replace"><![CDATA[~if\s*.*\['telephone'\]\)\s<.*\['telephone'\]\)\s>\s*.*~]]></search>
+			<add><![CDATA[if ((preg_replace("/[^0-9]/","",$this->request->post['telephone'])) < 10 || (preg_replace("/[^0-9]/","",$this->request->post['telephone'])) > 11 ) {]]></add>
+		</operation>
+	</file>
+	<!-- Fim: catalog/controller/checkout/*.php -->
+	
+	<!-- Inicio: catalog/controller/onecheckout/*.php -->
+	<file path="catalog/controller/onecheckout/" name="address.php,cartmodule.php,form.php,guest.php,register.php">
+		<operation error="skip">
+			<search regex="true" position="replace"><![CDATA[~if\s*.*\['telephone'\]\)\s<.*\['telephone'\]\)\s>\s*.*~]]></search>
+			<add><![CDATA[if ((preg_replace("/[^0-9]/","",$this->request->post['telephone'])) < 10 || (preg_replace("/[^0-9]/","",$this->request->post['telephone'])) > 11 ) {]]></add>
+		</operation>
+	</file>
+	<!-- Fim: catalog/controller/onecheckout/*.php -->
+
+	<!-- Inicio: catalog/language/english*/*/*.php -->
+	<file path="catalog/language/english*/*/" name="*.php">
+		<operation error="skip">
+			<search regex="true" position="replace"><![CDATA[~\$_\['error_telephone'\]*.*~]]></search>
+			<add><![CDATA[$_['error_telephone']       = 'Telephone must be between 10 and 11 characters!';]]></add>
+		</operation>
+	</file>
+	<!-- Fim: catalog/language/english/english*/*.php -->
+
+	<!-- Inicio: catalog/language/portugues*/*/*.php -->
+	<file path="catalog/language/portugues*/*/" name="*.php">
+		<operation error="skip">
+			<search regex="true" position="replace"><![CDATA[~\$_\['error_telephone'\]*.*~]]></search>
+			<add><![CDATA[$_['error_telephone']       = 'O campo de telefone deve conter entre 10 e 11 dígitos!';]]></add>
+		</operation>
+	</file>
+	<!-- Fim: catalog/language/english/portugues*/*.php -->
+</modification>

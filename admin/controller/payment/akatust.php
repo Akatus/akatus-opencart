@@ -16,6 +16,10 @@ class ControllerPaymentakatust extends Controller
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') 
 		{
 			$this->load->model('setting/setting');
+
+			$this->request->post['akatust_discount'] = str_replace(',', '.', $this->request->post['akatust_discount']);
+			$this->request->post['akatust_discount'] = number_format($this->request->post['akatust_discount'], 2, '.', '');
+
 			$this->model_setting_setting->editSetting('akatust', $this->request->post);				
 			$this->session->data['success'] = 'Dados foram salvos com sucesso!';
 			$this->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
@@ -73,6 +77,15 @@ class ControllerPaymentakatust extends Controller
 		$this->data['akatust_sort_order'] = $this->request->post['akatust_sort_order'];
 		} else {
 		$this->data['akatust_sort_order'] = isset($current_settings['akatust_sort_order']) ? $current_settings['akatust_sort_order'] : ''; 
+		} 
+
+		if (isset($this->request->post['akatust_discount'])) 
+		{
+			$this->data['akatust_discount'] = $this->request->post['akatust_discount'];
+		} 
+		else 
+		{
+			$this->data['akatust_discount'] = isset($current_settings['akatust_discount']) ? $current_settings['akatust_discount'] : ''; 
 		} 
 		
 		if (isset($this->request->post['akatust_status'])) {

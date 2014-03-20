@@ -78,7 +78,7 @@ class ControllerPaymentAkatus extends Controller
 				<email>'.$this->config->get('akatus_email_conta').'</email>
 			</recebedor>
 			<pagador>
-				<nome>'.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).'</nome>
+				<nome><![CDATA['.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).']]></nome>
 				<email>'.$pedido->row['email'].'</email>
 				<enderecos>
 		            <endereco>
@@ -105,7 +105,7 @@ class ControllerPaymentAkatus extends Controller
 
                 $xml .= '<produto>
                     <codigo>'. $produto['product_id'] .'</codigo>
-                    <descricao>'. $produto['name'] .'</descricao>
+                    <descricao><![CDATA['. $produto['name'] .']]></descricao>
                     <quantidade>'. $produto['quantity'] .'</quantidade>
                     <preco>'. $valor_produto .'</preco>
                     <peso>0.00</peso>

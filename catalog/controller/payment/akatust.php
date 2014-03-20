@@ -49,14 +49,20 @@ class ControllerPaymentakatust extends Controller
 		$cupom_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'coupon' AND order_id = '".$order_id."'");
 		$voucher_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'voucher' AND order_id = '".$order_id."'");
 
-        $frete = number_format($frete_result->row['value'], 2, '.', '');
+        if(isset($frete_result->row['value']) && !empty($frete_result->row['value'])){
+            $frete = number_format($frete_result->row['value'], 2, '.', '');
+        }else{
+            $frete = 0;
+        }
 
         $temCupomDesconto = (count($cupom_result->rows)) ? true : false;
         $temVoucherDesconto = (count($voucher_result->rows)) ? true : false;
+        $temTefDesconto = (!empty($this->config->get('akatust_discount'))) ? true : false;
 
-        $cupom = 0;
-        $voucher = 0;
-        $desconto = 0;
+        $cupom 			= 0;
+        $voucher 		= 0;
+        $desconto 		= 0;
+        $descontoTef 	= 0;
 
         if ($temCupomDesconto) {
             $cupom = abs($cupom_result->rows[0]['value']);
@@ -64,6 +70,10 @@ class ControllerPaymentakatust extends Controller
 				
         if ($temVoucherDesconto) {
             $voucher = abs($voucher_result->rows[0]['value']);
+        }
+
+        if ($temTefDesconto) {
+            $descontoTef = number_format($this->config->get('akatust_discount'), 2, '.', '');
         }
 
         $desconto = number_format($cupom + $voucher, 2, '.', '');
@@ -74,7 +84,7 @@ class ControllerPaymentakatust extends Controller
 				<email>'.$this->config->get('akatus_email_conta').'</email>
 			</recebedor>
 			<pagador>
-				<nome>'.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).'</nome>
+				<nome><![CDATA['.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).']]></nome>
 				<email>'.$pedido->row['email'].'</email>
 				<enderecos>
 		            <endereco>
@@ -96,24 +106,34 @@ class ControllerPaymentakatust extends Controller
 				</telefones>
 			</pagador>
 			<produtos>');
+			
+			$valor_total = 0;
 
              foreach($produtos_result->rows as $produto) {
+             	echo '1';
                 $valor_produto = number_format($produto['price'], 2, '.', '');
 
                 $xml .= '<produto>
                     <codigo>'. $produto['product_id'] .'</codigo>
-                    <descricao>'. $produto['name'] .'</descricao>
+                    <descricao><![CDATA['. $produto['name'] .']]></descricao>
                     <quantidade>'. $produto['quantity'] .'</quantidade>
                     <preco>'. $valor_produto .'</preco>
                     <peso>0.00</peso>
                     <frete>0.00</frete>
                     <desconto>0.00</desconto>
                 </produto>';
+
+                $valor_total += $valor_produto * $produto['quantity'];
             }
        
         $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
         $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
         $ipv4_address = filter_var($pedido->row['ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+
+        $desconto = number_format($cupom + $voucher, 2, '.', '');
+
+        $descontoTef = $valor_total * ($descontoTef / 100);
+        $desconto = number_format($descontoTef + $desconto, 2, '.', '');
 
         $xml .= '</produtos>
         

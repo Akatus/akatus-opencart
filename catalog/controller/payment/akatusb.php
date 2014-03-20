@@ -50,14 +50,20 @@ class ControllerPaymentAkatusb extends Controller
 		$cupom_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'coupon' AND order_id = '".$order_id."'");
 		$voucher_result = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE code = 'voucher' AND order_id = '".$order_id."'");
 
-        $frete = number_format($frete_result->row['value'], 2, '.', '');
+        if(isset($frete_result->row['value']) && !empty($frete_result->row['value'])){
+            $frete = number_format($frete_result->row['value'], 2, '.', '');
+        }else{
+            $frete = 0;
+        }
 
         $temCupomDesconto = (count($cupom_result->rows)) ? true : false;
         $temVoucherDesconto = (count($voucher_result->rows)) ? true : false;
+        $temBoletoDesconto = (!empty($this->config->get('akatusb_discount'))) ? true : false;
 
-        $cupom = 0;
-        $voucher = 0;
-        $desconto = 0;
+        $cupom          = 0;
+        $voucher        = 0;
+        $desconto       = 0;
+	    $descontoBoleto = 0;
 
         if ($temCupomDesconto) {
             $cupom = abs($cupom_result->rows[0]['value']);
@@ -67,7 +73,9 @@ class ControllerPaymentAkatusb extends Controller
             $voucher = abs($voucher_result->rows[0]['value']);
         }
 
-        $desconto = number_format($cupom + $voucher, 2, '.', '');
+	   if ($temBoletoDesconto) {
+            $descontoBoleto = number_format($this->config->get('akatusb_discount'), 2, '.', '');
+        }
 
         $xml=utf8_encode('<?xml version="1.0" encoding="utf-8"?><carrinho>
         <recebedor>
@@ -75,7 +83,7 @@ class ControllerPaymentAkatusb extends Controller
             <email>'.$this->config->get('akatus_email_conta').'</email>
         </recebedor>
         <pagador>
-            <nome>'.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).'</nome>
+            <nome><![CDATA['.utf8_decode($pedido->row['firstname']).' '.utf8_decode($pedido->row['lastname']).']]></nome>
             <email>'.$pedido->row['email'].'</email>
             <enderecos>
                 <endereco>
@@ -97,25 +105,33 @@ class ControllerPaymentAkatusb extends Controller
             </telefones>
         </pagador>
         <produtos>');
+        $valor_total = 0;
 
         foreach($produtos_result->rows as $produto) {
             $valor_produto = number_format($produto['price'], 2, '.', '');
 
             $xml .= '<produto>
                 <codigo>'. $produto['product_id'] .'</codigo>
-                <descricao>'. $produto['name'] .'</descricao>
+                <descricao><![CDATA['. $produto['name'] .']]></descricao>
                 <quantidade>'. $produto['quantity'] .'</quantidade>
                 <preco>'. $valor_produto .'</preco>
                 <peso>0.00</peso>
                 <frete>0.00</frete>
                 <desconto>0.00</desconto>
             </produto>';
+
+            $valor_total += $valor_produto * $produto['quantity'];
         }
-			   
+
         $fingerprint_akatus = isset($_POST['fingerprint_akatus']) ? $_POST['fingerprint_akatus'] : '';
         $fingerprint_partner_id = isset($_POST['fingerprint_partner_id']) ? $_POST['fingerprint_partner_id'] : '';
         $ipv4_address = filter_var($pedido->row['ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
-	
+	   
+        $desconto = number_format($cupom + $voucher, 2, '.', '');
+
+        $descontoBoleto = $valor_total * ($descontoBoleto / 100);
+        $desconto = number_format($descontoBoleto + $desconto, 2, '.', '');
+
         $xml .= '</produtos>
         
         <transacao>
@@ -148,7 +164,6 @@ class ControllerPaymentAkatusb extends Controller
         $akatus = curl_exec($ch);
 
         curl_close($ch);
-
         $akatus=$this->xml2array($akatus);
 
         if ($akatus['resposta']['status'] == 'erro') {
