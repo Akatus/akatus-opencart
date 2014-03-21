@@ -45,43 +45,44 @@
 </div>
 <div class="left">
     <h2>Endereço de Cobrança</h2>
-    
-    <span class="required">*</span> Endereço:<br />
-    <input type="text" name="address_1" value="<?php if (isset($address_1)) echo $address_1 ?>" class="akatus-field" />
-    <?php if (isset($error['address_1'])) echo "<span class='error'>" . $error['address_1'] . "</span>" ?>
+        <span id="payment-postcode-required" class="required">*</span> CEP:<br />
+        <input type="text" name="postcode" id="postcode" value="<?php if (isset($postcode)) echo $postcode ?>" class="akatus-field" />
+        <?php if (isset($error['postcode'])) echo "<span class='error'>" . $error['postcode'] . "</span>" ?>
+        <br />
+        
+    <div id="address_container">
+        <span class="required">*</span> Endereço:<br />
+        <input type="text" name="address_1" id="address_1" value="<?php if (isset($address_1)) echo $address_1 ?>" class="akatus-field" />
+        <?php if (isset($error['address_1'])) echo "<span class='error'>" . $error['address_1'] . "</span>" ?>
+        <br />
+        
+        <span class="required">*</span> Bairro:<br />
+        <input type="text" name="address_2" id="address_2" value="<?php if (isset($address_2)) echo $address_2 ?>" class="akatus-field" />
+        <?php if (isset($error['address_2'])) echo "<span class='error'>" . $error['address_2'] . "</span>" ?>
+        <br />    
+        
+        <span class="required">*</span> Cidade:<br />
+        <input type="text" name="city" id="city" value="<?php if (isset($city)) echo $city ?>" class="akatus-field" />
+        <?php if (isset($error['city'])) echo "<span class='error'>" . $error['city'] . "</span>" ?>
+        <br />
+        
+        <span class="required">*</span> Estado:<br />
+        <select name="zone_id" id="zone_id" class="akatus-field"></select>
+        <?php if (isset($error['zone'])) echo "<span class='error'>" . $error['zone'] . "</span>" ?>
+        
+        <span class="required">*</span> País:<br />
+        <select name="country_id" class="akatus-field">
+            <?php foreach ($countries as $country) { ?>
+            <?php if ($country['country_id'] == $country_id) { ?>
+            <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
+            <?php } else { ?>
+            <option value="<?php echo $country['country_id']; ?>"><?php echo $country['name']; ?></option>
+            <?php } ?>
+            <?php } ?>
+        </select>
+        <?php if (isset($error['country'])) echo "<span class='error'>" . $error['country'] . "</span>" ?>
+    </div>
     <br />
-    
-    <span class="required">*</span> Bairro:<br />
-    <input type="text" name="address_2" value="<?php if (isset($address_2)) echo $address_2 ?>" class="akatus-field" />
-    <?php if (isset($error['address_2'])) echo "<span class='error'>" . $error['address_2'] . "</span>" ?>
-    <br />    
-    
-    <span class="required">*</span> Cidade:<br />
-    <input type="text" name="city" value="<?php if (isset($city)) echo $city ?>" class="akatus-field" />
-    <?php if (isset($error['city'])) echo "<span class='error'>" . $error['city'] . "</span>" ?>
-    <br />
-    
-    <span id="payment-postcode-required" class="required">*</span> CEP:<br />
-    <input type="text" name="postcode" value="<?php if (isset($postcode)) echo $postcode ?>" class="akatus-field" />
-    <?php if (isset($error['postcode'])) echo "<span class='error'>" . $error['postcode'] . "</span>" ?>
-    <br />
-    
-    <span class="required">*</span> País:<br />
-    <select name="country_id" class="akatus-field">
-        <?php foreach ($countries as $country) { ?>
-        <?php if ($country['country_id'] == $country_id) { ?>
-        <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
-        <?php } else { ?>
-        <option value="<?php echo $country['country_id']; ?>"><?php echo $country['name']; ?></option>
-        <?php } ?>
-        <?php } ?>
-    </select>
-    <?php if (isset($error['country'])) echo "<span class='error'>" . $error['country'] . "</span>" ?>
-    <br />
-    
-    <span class="required">*</span> Estado:<br />
-    <select name="zone_id" class="akatus-field"></select>
-    <?php if (isset($error['zone'])) echo "<span class='error'>" . $error['zone'] . "</span>" ?>
     <br />
     <br />
 </div>
@@ -95,5 +96,58 @@
 </div>
 
 <script>
-    
+    $(function() {
+        $('#postcode').mask('00000-000');
+
+        $('input[name=payment_address]').change(function() {
+
+            switch ($(this).val()) {
+                
+               case 'existing':
+                  $("#payment-new").hide();
+                  break;
+                  
+               case 'new':
+                  $("#payment-new").show();
+                  break;
+
+               default:
+                   break;
+            }
+        });
+    });
+
+    $('#postcode').blur(function(){
+        var cep = $(this).val();
+        $('#address_container').slideDown();
+        $('#address_1').focus();
+
+        $.ajax({
+            url: "https://lvws0001.lojablindada.com/endereco/?format=json&cep="+cep,
+            jsonp: "callback",
+            dataType: "jsonp",
+            data: {
+                format: "json"
+            },
+            success: function( response ) {
+
+                $('#address_1').val(response.endereco);
+                $('#address_2').val(response.bairro);
+                $('#city').val(response.cidade);
+
+                $('#zone_id option').each(function() {
+                    var estado = $(this).html();
+                    var estado_slug = slug_estado(estado);
+                    
+                    if(estado_slug.toUpperCase() == response.estado){
+                        $(this).prop("selected", true); 
+                    }
+                });
+            }
+        });
+    })
 </script>
+
+<style type="text/css">
+    #address_container { display: none; }
+</style>
