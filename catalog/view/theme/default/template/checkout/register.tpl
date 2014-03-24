@@ -20,7 +20,7 @@
     <br />
     
     <span class="required">*</span> Telefone:<br />
-    <input type="text" name="telephone" value="<?php if (isset($telephone)) echo $telephone ?>" class="akatus-field" />
+    <input type="text" name="telephone" id="telephone" value="<?php if (isset($telephone)) echo $telephone ?>" class="akatus-field" />
     <?php if (isset($error['telephone'])) echo "<span class='error'>" . $error['telephone'] . "</span>" ?>
 
     <br /><br />
@@ -97,6 +97,9 @@
 
 <script>
     $(function() {
+        $('#postcode').mask('00000-000');
+        
+        $('#telephone').mask('(00) 0000-00009');
 
         $('input[name=payment_address]').change(function() {
 

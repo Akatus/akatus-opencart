@@ -61,7 +61,10 @@
 </div>
 
 <script>
+    $('#postcode').mask('00000-000');
+    
     $(function() {
+
         $('input[name=payment_address]').change(function() {
 
             switch ($(this).val()) {

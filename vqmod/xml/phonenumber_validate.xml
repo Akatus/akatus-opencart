@@ -24,7 +24,7 @@
 	<!-- Fim: catalog/controller/affiliate/*.php -->
 	
 	<!-- Inicio: catalog/controller/checkout/*.php -->
-	<file path="catalog/controller/checkout/" name="cart.php,guest_shipping.php,guest.php,manual.php,payment_address.php,register.php,shipping_address.php">
+	<file path="catalog/controller/checkout/" name="cart.php,guest_shipping.php,guest.php,manual.php,payment_address.php,register.php,shipping_address.php,checkout.php">
 		<operation>
 			<search regex="true" position="replace"><![CDATA[~if\s*.*\['telephone'\]\)\s<.*\['telephone'\]\)\s>\s*.*~]]></search>
 			<add><![CDATA[if ( strlen(preg_replace("/[^0-9]/","",$this->request->post['telephone'])) < 10 || strlen(preg_replace("/[^0-9]/","",$this->request->post['telephone'])) > 11 ) {]]></add>

@@ -304,7 +304,7 @@ function dadosCadastraisValidos() {
         }
 
         var telephone = $('input[name=telephone]');
-        if (telephone.val() === '' || ! telephone_pattern.test(telephone.val())) {
+        if (telephone.val() === '' || ! telephone_pattern.test(telephone.val().replace(/[^\d]/g, ''))) {
             alert(MSG_TELEFONE_INVALIDO);
             telephone.focus();
             return false;
@@ -372,7 +372,7 @@ function enderecoCobrancaValido() {
         }
 
         var postcode = $('input[name=postcode]');
-        if (postcode.val() === '' || (postcode.val().length !== 8)) {
+        if (postcode.val() === '' || (postcode.val().replace(/[^\d]/g, '').length !== 8)) {
             alert(MSG_CEP_INVALIDO);
             postcode.focus();
             return false;
@@ -444,7 +444,7 @@ function enderecoEntregaValido() {
             }
 
             var postcode = $('input[name=shipping_postcode]');
-            if (postcode.val() === '' || (postcode.val().length !== 8)) {
+            if (postcode.val() === '' || (postcode.val().replace(/[^\d]/g, '').length !== 8)) {
                 alert(MSG_CEP_INVALIDO);
                 postcode.focus();
                 return false;
