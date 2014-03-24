@@ -97,7 +97,6 @@
 
 <script>
     $(function() {
-        $('#postcode').mask('00000-000');
 
         $('input[name=payment_address]').change(function() {
 
