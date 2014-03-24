@@ -69,8 +69,6 @@
 
 <script>
     $(function() {
-        $('#shipping_postcode').mask('00000-000');
-
         $('input[name=shipping_address]').change(function() {
 
             switch ($(this).val()) {
