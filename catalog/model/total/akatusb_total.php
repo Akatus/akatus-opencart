@@ -7,7 +7,6 @@
  * @version 1.0
  **/
 
-
 class ModelTotalakatusbTotal extends Model 
 {
   public function getTotal(&$total_data, &$total, &$taxes) {
@@ -16,12 +15,14 @@ class ModelTotalakatusbTotal extends Model
         $paymethod = $this->session->data['payment_method']['code'];
 
     $enabled = false;
-    if(!empty($this->config->get('akatusb_total_status')))
+    $akatusb_total_status = $this->config->get('akatusb_total_status');
+    if(!empty($akatusb_total_status))
       $enabled = $this->config->get('akatusb_total_status');
 
     $discount = 0;
-    if(!empty($this->config->get('akatusb_discount')))
-      $discount = $this->config->get('akatusb_discount');
+    $akatusb_discount = $this->config->get('akatusb_discount');
+    if(!empty(akatusb_discount))
+      $discount = $akatusb_discount;
 
     if($paymethod == 'akatusb' && !empty($enabled) && !empty($discount)){
 
