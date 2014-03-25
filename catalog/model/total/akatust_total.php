@@ -15,11 +15,13 @@ class ModelTotalakatustTotal extends Model
         $paymethod = $this->session->data['payment_method']['code'];
 
     $enabled = false;
-    if(!empty($this->config->get('akatust_total_status')))
+    $akatust_total_status = $this->config->get('akatust_total_status');
+    if(!empty($akatust_total_status))
       $enabled = $this->config->get('akatust_total_status');
 
     $discount = 0;
-    if(!empty($this->config->get('akatust_discount')))
+    $akatust_discount = $this->config->get('akatust_discount');
+    if(!empty($akatust_discount))
       $discount = $this->config->get('akatust_discount');
 
     if($paymethod == 'akatust' && !empty($enabled) && !empty($discount)){
