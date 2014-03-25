@@ -11,12 +11,15 @@ Caso queira utilizar a versão com One Step Checkout clique no link: https://git
 ## Instalação
 
 __Atenção:__ Faça um backup completo dos arquivos e banco de dados da sua loja antes de iniciar a instalação.
+             
+__O módulo requer a instalação do Vqmod__
+
 
 * Abra o arquivo compactado e extraia todos os diretórios na raíz de sua loja OpenCart, sobrescrevendo os arquivos e diretórios já existentes.
 
 * Execute apenas 1 vez o arquivo “akatus_db_install.php”, acessando ele através de http://sualoja.com.br/akatus_db_install.php. Este arquivo criará os status de
 compras que precisaremos para atualizar os pagamentos. Se tudo der certo, aparecerá
-um “OK” ao término da execução.
+a mensagem “Os status das transacoes da Akatus foram inseridos com sucesso” ao término da execução.
 
 * Efetue login na Administração. Vá ao menu *Extensions >> Payments*. Aparecerão 3 novos módulos Akatus – Cartões de Crédito, Boleto Bancário e Transferência Eletrônica. Clique no link INSTALL, localizado ao lado direito de cada um deles e em seguida em EDIT.
 
@@ -38,12 +41,18 @@ Akatus em *“Minha Conta >> Meios de Pagamento”*. O valor padrão é 1. __*(a
 ## Dados da conta Akatus
 
 * __Tipo__ - Produção ou Sandbox (para realização de testes)
+
 * __E-mail da Conta__ - E-mail de cadastro da conta Akatus
+
 * __Token NIP__ - Código gerado no painel da conta Akatus (menu Integração > Chaves de Segurança)
+
 * __API Key__ - Código gerado no painel da conta Akatus (menu Integração > Chaves de Segurança)
 
+*__Public Token__ - Código gerado no painel da conta Akatus (menu Integração > Chaves de Segurança)
+
 * __Número máximo de parcelas__ - Informe em até quantas
-parcelas o usuário poderá dividir suas compras. O padrão é 12 parcelas, e o valor mínimo da parcela será sempre 5 reais. __*(apenas para cartão de crédito)*__
+parcelas o usuário poderá dividir suas compras. O padrão é 12 parcelas, e o valor mínimo da parcela será sempre 5 reais. 
+__*(apenas para cartão de crédito)*__
 
 ## Notificação Instantânea de Pagamento (NIP)
 
@@ -57,3 +66,12 @@ Clique em Salvar.
 __Atenção:__ É interessante utilizar HTTPS para o NIP, porém é necessário que o servidor esteja corretamente configurado e com certificado SSL válido.
 
 
+## Configuração de Desconto
+
+A opção de desconto está disponível apenas para boleto e TEF. Entre nas respectivas opções de pagamento e realize a configuração.
+Lembramos que o campo só aceita porcentagem.
+
+
+## Mostrando o valor do desconto no checkout
+
+Para mostrar o valor do desconto no checkout entre em: *Extensions >> Order Totals* e ative as opções Akatus Discount Docket e Akatus Discount TEF.
