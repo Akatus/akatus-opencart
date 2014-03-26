@@ -186,6 +186,7 @@ class ControllerPaymentAkatusb extends Controller
             $this->model_checkout_order->confirm($order_id, $this->config->get('akatusb_padrao'), $comment, $notify = true);
             $this->db->query("INSERT INTO akatus_transacoes (id_pedido, id_akatus) VALUES(". $pedido->row['order_id'] . ",'" .$akatus['resposta']['transacao'] . "')");
 
+            $akatus['resposta']['url_retorno'] = @str_replace(".html", "", @end(@explode("/", $akatus['resposta']['url_retorno'])));
             $output = "<script>window.location = 'index.php?route=information/akatus&tipo=5&url_boleto=" . urlencode($akatus['resposta']['url_retorno']) . "';</script>";
 
         }
