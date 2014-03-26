@@ -111,7 +111,6 @@ class ControllerPaymentakatust extends Controller
 			$valor_total = 0;
 
              foreach($produtos_result->rows as $produto) {
-             	echo '1';
                 $valor_produto = number_format($produto['price'], 2, '.', '');
 
                 $xml .= '<produto>
