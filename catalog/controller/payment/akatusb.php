@@ -58,7 +58,8 @@ class ControllerPaymentAkatusb extends Controller
 
         $temCupomDesconto = (count($cupom_result->rows)) ? true : false;
         $temVoucherDesconto = (count($voucher_result->rows)) ? true : false;
-        $temBoletoDesconto = (!empty($this->config->get('akatusb_discount'))) ? true : false;
+        $akatusb_discount = $this->config->get('akatusb_discount');
+        $temBoletoDesconto = (!empty($akatusb_discount)) ? true : false;
 
         $cupom          = 0;
         $voucher        = 0;
@@ -74,7 +75,7 @@ class ControllerPaymentAkatusb extends Controller
         }
 
 	   if ($temBoletoDesconto) {
-            $descontoBoleto = number_format($this->config->get('akatusb_discount'), 2, '.', '');
+            $descontoBoleto = number_format($akatusb_discount, 2, '.', '');
         }
 
         $xml=utf8_encode('<?xml version="1.0" encoding="utf-8"?><carrinho>

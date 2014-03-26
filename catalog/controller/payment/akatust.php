@@ -57,7 +57,8 @@ class ControllerPaymentakatust extends Controller
 
         $temCupomDesconto = (count($cupom_result->rows)) ? true : false;
         $temVoucherDesconto = (count($voucher_result->rows)) ? true : false;
-        $temTefDesconto = (!empty($this->config->get('akatust_discount'))) ? true : false;
+        $akatust_discount = $this->config->get('akatust_discount');
+        $temTefDesconto = (!empty($akatust_discount)) ? true : false;
 
         $cupom 			= 0;
         $voucher 		= 0;
@@ -73,7 +74,7 @@ class ControllerPaymentakatust extends Controller
         }
 
         if ($temTefDesconto) {
-            $descontoTef = number_format($this->config->get('akatust_discount'), 2, '.', '');
+            $descontoTef = number_format($akatust_discount, 2, '.', '');
         }
 
         $desconto = number_format($cupom + $voucher, 2, '.', '');
