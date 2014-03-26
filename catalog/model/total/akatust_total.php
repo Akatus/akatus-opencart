@@ -28,7 +28,7 @@ class ModelTotalakatustTotal extends Model
 
       $this->load->language('total/akatust_total');
 
-      $percent = $this->config->get('akatust_discount') / 100;
+      $percent = $akatust_discount / 100;
       $percent = $total * $percent;
       $total_data[] = array( 
       'code'     => 'akatust',

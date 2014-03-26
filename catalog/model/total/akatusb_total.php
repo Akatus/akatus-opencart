@@ -22,14 +22,14 @@ class ModelTotalakatusbTotal extends Model
 
     $discount = 0;
     $akatusb_discount = $this->config->get('akatusb_discount');
-    if(!empty(akatusb_discount))
+    if(!empty($akatusb_discount))
       $discount = $akatusb_discount;
 
     if($paymethod == 'akatusb' && !empty($enabled) && !empty($discount)){
 
       $this->load->language('total/akatusb_total');
 
-      $percent = $this->config->get('akatusb_discount') / 100;
+      $percent = $akatusb_discount / 100;
       $percent = $total * $percent;
       $total_data[] = array( 
       'code'     => 'akatusb',
