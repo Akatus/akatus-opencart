@@ -134,7 +134,7 @@ class ControllerPaymentAkatus extends Controller
         <referencia>'.$pedido->row['order_id'].'</referencia>
         <meio_de_pagamento>'. utf8_decode($request->post['bandeira_cartao']) .'</meio_de_pagamento>
         <portador>
-            <nome>'. utf8_decode(strtoupper($request->post['cartao_titular'])) .'</nome>
+            <nome><![CDATA['. strtoupper($request->post['cartao_titular']) .']]></nome>
             <cpf>'.preg_replace("/[^0-9]/","",$request->post['cartao_cpf']).'</cpf>
             <telefone>'.$request->post['cartao_telefone_ddd'].$request->post['cartao_telefone'].'</telefone>
         </portador>
