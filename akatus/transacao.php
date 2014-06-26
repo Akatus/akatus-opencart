@@ -21,3 +21,4 @@ class Transacao
     const ID_DEVOLVIDO              = 10205;
     const ID_ESTORNADO              = 10206;
 }
+?>
